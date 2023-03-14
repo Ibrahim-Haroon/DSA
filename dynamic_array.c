@@ -14,17 +14,10 @@ typedef struct list{
     int capacity;
     int* data;
 }List;
-
-LIST list_init(void);
-bool isEmpty(LIST list);
 bool isFull(LIST list); //private method
 void increase_size(LIST list); //private method
-void list_add(LIST list, int num);
-void list_remove(LIST list, int num);
-bool list_contains(LIST list, int num);
-void list_num_at(LIST list, int index);
-void print_list(LIST list);
-void list_destroy(LIST* list);
+
+bool isEmpty(LIST list);
 
 LIST list_init(void) {
     List* newList = (List*) malloc(sizeof(List));
