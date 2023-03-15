@@ -65,6 +65,11 @@ void stack_pop(STACK stack) {
         return;
     }
     Stack* curr_stack = (Stack*)stack;
+    if (curr_stack ->top->next == NULL) { //only one node
+        free(curr_stack ->top);
+        curr_stack ->top = NULL;
+        return;
+    }
     Node_s* toDelete = curr_stack ->top;
     curr_stack ->top = curr_stack ->top ->next;
     free(toDelete);
