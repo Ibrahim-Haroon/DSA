@@ -17,5 +17,6 @@ int main(int argc, char** argv) {
     int peak = stack_peak(test);
     printf("%d\n", peak);
     stack_print(test);
+    stack_destroy(&test);
     return 0;
 }
