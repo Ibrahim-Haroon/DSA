@@ -6,17 +6,16 @@
 //
 
 #include <stdio.h>
-#include "queue.h"
+#include <stdlib.h>
+#include "hash_map.h"
 
 int main(int argc, char** argv) {
-    QUEUE test = queue_init();
-    for (int i = 0; i < 5; i++) {
-        enqueue(test, i);
+    HashMap test = hashMap_init();
+    for (int i = 0; i < 100; i++) {
+        hashMap_insert(test, i, rand() % 250);
     }
-    for (int i = 0; i < 3; i++) {
-        dequeue(test);
-    }
-    queue_print(test);
-    queue_destroy(&test);
+    hashMap_print(test);
+    hashMap_contains(test, 9) ? printf("YES\n") : printf("NO\n");
+    hashMap_destroy(&test);
     return 0;
 }
