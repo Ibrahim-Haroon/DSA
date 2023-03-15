@@ -33,15 +33,13 @@ HashMap hashMap_init(void) {
     }
     newMap ->size = 0;
     newMap ->capacity = 1;
-    newMap -> table = (Node_m**) malloc(sizeof(Node_m*) * newMap ->capacity);
+    newMap -> table = (Node_m**) calloc(newMap ->capacity, sizeof(Node_m*));
     if (newMap ->table == NULL) {
         fprintf(stderr, "Failed to allocate space for table\n");
         free(newMap); //unncessary
         exit(EXIT_FAILURE);
     }
-    for (int i = 0; i < newMap ->capacity; i++) {
-        newMap ->table[i] = NULL;
-    }
+
     return newMap;
 }
 
@@ -60,10 +58,7 @@ bool hashMap_isFull(HashMap hashmap) {
 void increase_table_size(HashMap hashmap) {
     Map* map = (Map*)hashmap;
     map ->capacity *= LOAD_FACTOR;
-    Node_m** new_table = (Node_m**) malloc(sizeof(Node_m*) * (map ->capacity));
-    for (int i = 0; i < map ->capacity; i++) {
-        new_table[i] = NULL;
-    }
+    Node_m** new_table = (Node_m**) calloc((map ->capacity), sizeof(Node_m*));
     for (int i = 0; i < map ->capacity / LOAD_FACTOR; i++) {            //rehash everything
         while (map ->table[i] != NULL) {                                //makes sure to rehash any collided keys
             int index = hash(map ->table[i]->key, hashmap);
@@ -101,7 +96,9 @@ bool hashMap_isEmpty(HashMap hashmap) {
     return false;
 }
 
+bool hashMap_contains(HashMap hashmap, int key);
 void hashMap_insert(HashMap hashmap, int key, int value) {
+    if (hashMap_contains(hashmap, key)) return; //no duplicates
     if (hashMap_isFull(hashmap)) increase_table_size(hashmap);
     Map* map = (Map*)hashmap;
     unsigned int index = hash(key, hashmap);
