@@ -6,16 +6,15 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
-#include "hash_map.h"
+#include "hash_set.h"
 
 int main(int argc, char** argv) {
-    HashMap test = hashMap_init();
-    for (int i = 0; i < 100; i++) {
-        hashMap_insert(test, i, rand() % 250);
+    HashSet test = hashSet_init();
+    for (int i = 0; i < 10; i++) {
+        hashSet_add(test, i);
     }
-    hashMap_print(test);
-    hashMap_contains(test, 9) ? printf("YES\n") : printf("NO\n");
-    hashMap_destroy(&test);
+    hashSet_remove_entry(test, 4);
+    hashSet_print(test);
+    hashSet_destroy(&test);
     return 0;
 }
