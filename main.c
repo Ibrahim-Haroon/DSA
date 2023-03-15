@@ -5,18 +5,17 @@
 //  Created by Ibrahim Haroon on 3/14/23.
 //
 
-#include "doubly_linked_list.h"
+#include "stack.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
-    DOUBLY_LINKED_LIST test = dll_init();
+    STACK test = stack_init();
     for (int i = 0; i < 15; i++) {
-        dll_add(&test, i);
+        stack_push(test, i);
     }
-    dll_remove_num(&test, 9);
-    dll_remove(&test);
-    dll_print(test);
-    dll_contains(test, 23) ? printf("YES\n") : printf("NO\n");
-    dll_destroy(&test);
+    stack_pop(test);
+    int peak = stack_peak(test);
+    printf("%d\n", peak);
+    stack_print(test);
     return 0;
 }
