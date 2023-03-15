@@ -1,25 +1,23 @@
 //
 //  main.c
-//  DSA
+//  data_structures_and_algorithms
 //
 //  Created by Ibrahim Haroon on 3/14/23.
 //
 
-#include "dynamic_array.h"
+#include "singly_linked_list.h"
 #include <stdio.h>
 
-int main(int argc, const char * argv[]) {
-    LIST test = list_init();
-    list_remove(test, 10);
-    for (int i = 0; i < 10; i++) {
-        list_add(test, i);
+int main(int argc, char** argv) {
+    
+    SINGLY_LINKED_LIST test = ll_init();
+    for (int i = 0; i < 15; i++) {
+        ll_add(&test, i);
     }
-    list_remove(test, 4);
-    list_remove(test, 0);
-    list_remove(test, 9);
-    print_list(test);
-    list_contains(test, 3) ? printf("Found!\n") : printf("Not in List\n");
-    list_destroy(&test);
-
+    ll_remove(&test);
+    ll_remove_num(&test, 8); //need address of linked list in case the number being removed is the first node
+    ll_print(test);
+    ll_contains(test, 32) ? printf("YES\n") : printf("NO\n");
+    ll_destroy(&test);
     return 0;
 }
