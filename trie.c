@@ -21,6 +21,8 @@ typedef struct trie{
     TrieNode* root;
 }Trie;
 TrieNode* createTrieNode(void); //private
+void print_trie_recursive(TrieNode* currNode, StringBuilder prefix); //private
+void destroy_trie_recursive(TrieNode* currNode); //private
 
 TRIE trie_init(void) {
     Trie* newTrie = (Trie*) malloc(sizeof(Trie));
@@ -104,7 +106,7 @@ bool trie_search(TRIE trie,char* word) {
 }
 
 
-void print_recursive(TrieNode* currNode, StringBuilder prefix) {
+void print_trie_recursive(TrieNode* currNode, StringBuilder prefix) {
     if (currNode ->terminal) { //reached end of word
         print_s(prefix);
     }
@@ -112,7 +114,7 @@ void print_recursive(TrieNode* currNode, StringBuilder prefix) {
     for (int i = 0; i < ALPHABELT_SIZE; i++) { //go through every child
         if (currNode ->children[i] != NULL) {
             stringBuilder_appendChar(i + 'a', prefix);
-            print_recursive(currNode ->children[i], prefix);
+            print_trie_recursive(currNode ->children[i], prefix);
             stringBuilder_pop(prefix);
         }
     }
@@ -125,17 +127,17 @@ void trie_printTrie(TRIE trie) {
     }
     Trie* curr_trie = (Trie*)trie;
     StringBuilder emptyStr = stringBuilder_init();
-    print_recursive(curr_trie ->root, emptyStr);
+    print_trie_recursive(curr_trie ->root, emptyStr);
     stringBuilder_destroy(&emptyStr);
     return;
 }
 
-void destroy_recursive(TrieNode* currNode) {
+void destroy_trie_recursive(TrieNode* currNode) {
     if (currNode == NULL) return;
     
     for (int i = 0; i < ALPHABELT_SIZE; i++) {
         if (currNode ->children[i] != NULL) {
-            destroy_recursive(currNode ->children[i]);
+            destroy_trie_recursive(currNode ->children[i]);
         }
     }
     free(currNode);
@@ -148,7 +150,7 @@ void trie_destroyTrie(TRIE* trie) {
         return;
     }
     Trie** curr_trie = (Trie**)trie;
-    destroy_recursive((*curr_trie) ->root);
+    destroy_trie_recursive((*curr_trie) ->root);
     
     free(*trie);
     *trie = NULL;
