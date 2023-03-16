@@ -78,6 +78,14 @@ int stringLen(char* string) {
     return len;
 }
 
+void stringBuilder_appendChar(char c, StringBuilder string) {
+    if (string_isFull(string)) increaseStringSize(string);
+    String* curr_string = (String*)string;
+    curr_string ->word[curr_string ->size++] = c;
+    curr_string->word[curr_string ->size] = '\0';
+    return;
+}
+
 void stringBuilder_append(char* anything, StringBuilder string) {
     if (anything == NULL || *anything == '\0') return; //cannot enter invalid or empty string
     String* curr_string = (String*)string;
@@ -105,6 +113,12 @@ void print_s(StringBuilder string) {
     String* curr_string = (String*)string;
     printf("%s\n", curr_string ->word);
     return;
+}
+
+int string_len(StringBuilder string) {
+    if (string_isEmpty(string)) return -1;
+    String* curr_string = (String*)string;
+    return curr_string ->size;
 }
 
 void stringBuilder_destroy(StringBuilder* string) {
