@@ -6,19 +6,14 @@
 //
 
 #include <stdio.h>
-#include "trie.h"
+#include "binary_tree.h"
 
 int main(int argc, char** argv) {
-    TRIE newTrie = trie_init();
-    trie_insert(newTrie, "cage");
-    trie_insert(newTrie, "abs");
-    trie_insert(newTrie, "bass");
-    trie_insert(newTrie, "cage");
-    trie_insert(newTrie, "cattle");
-    trie_insert(newTrie, "cage");
-    trie_printTrie(newTrie);
-    
-    trie_search(newTrie, "abs") ? printf("Found!\n") : printf("Not in Dictinary!\n");
-    trie_destroyTrie(&newTrie);
+    BST test = bst_init();
+    for (int i = 0; i < 100; i++) {
+        bst_insert(test, i);
+    }
+    bst_print(test);
+    bst_destroy(&test);
     return 0;
 }
