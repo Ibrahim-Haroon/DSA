@@ -30,7 +30,7 @@ TRIE trie_init(void) {
     }
     
     newTrie ->root = (TrieNode*) malloc(sizeof(TrieNode));
-    newTrie ->root = createTrieNode();
+    newTrie ->root = NULL;
     
     return newTrie;
 }
