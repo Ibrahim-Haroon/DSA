@@ -223,15 +223,18 @@ bool contains_recursive(Tree_node* root, int value) {
     if (root == NULL) {
         return false;
     }
-    
+    if (root ->value == value) {
+        return true;
+    }
     if (value < root->value) {
-        contains_recursive(root->left, value);
+        return contains_recursive(root->left, value);
     }
-    else if (value > root->value) {
-        contains_recursive(root->right, value);
+    else {
+        return contains_recursive(root->right, value);
     }
-    
-    return true;//if value == current node
+
+    //never reaches
+    return false;
 }
 
 bool bst_contains(BST tree, int value) {
