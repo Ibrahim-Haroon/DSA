@@ -71,11 +71,12 @@ void trie_insert(TRIE trie,char* word) {
             temp ->children[index] = createTrieNode();
         }
         temp = temp ->children[index];
-        
-        if (temp ->terminal == false) {
-            temp ->terminal = true;
-        }
     }
+    
+    if (temp ->terminal == false) {
+        temp ->terminal = true;
+    }
+    
     stringBuilder_destroy(&tmp_word);
     return;
 }
