@@ -22,7 +22,8 @@ typedef struct bst{
 Tree_node* create_treeNode(int value);          //private
 int getHeight(Tree_node* root);                 //private
 int getBalanceFactor(Tree_node* root);          //private
-void balance_tree(BST tree);                    //private
+Tree_node* rotateLeft(Tree_node* parent);       //private
+Tree_node* rotateRight(Tree_node* parent);      //private
 void insert_recursive(Tree_node** root, int value);  //private
 void remove_recursive(Tree_node** root, int value); //private
 bool contains_recursive(Tree_node* root, int value); //private
@@ -214,8 +215,7 @@ void remove_recursive(Tree_node** root, int value) {
 
 void bst_remove(BST tree, int value) {
     if (bst_isEmpty(tree)) return;
-    Binary_tree* curr_tree = (Binary_tree*)tree;
-    remove_recursive(&(curr_tree->root), value);
+    remove_recursive(&(((Binary_tree*)tree)->root), value);
 }
 
 
@@ -238,9 +238,8 @@ bool contains_recursive(Tree_node* root, int value) {
 }
 
 bool bst_contains(BST tree, int value) {
-    Binary_tree* curr_tree = (Binary_tree*)tree;
-    
-    return contains_recursive(curr_tree ->root, value);
+    if (bst_isEmpty(tree)) return false;
+    return contains_recursive(((Binary_tree*)tree) ->root, value);
 }
 
 #define COUNT (5)
