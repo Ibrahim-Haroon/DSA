@@ -167,18 +167,22 @@ void remove_recursive(Tree_node** root, int value) {
         remove_recursive((&(*root) ->right), value);
     }
     else { //value found
-        // case 1: no child or one child
-        if ((*root)->left == NULL) {
-            Tree_node* temp = (*root);
-            (*root) = (*root) ->right;
+        // Case 1: Node has no children
+        if ((*root)->left == NULL && (*root)->right == NULL) {
+            free(*root);
+            *root = NULL;
+        }
+        // Case 2: Node has one child
+        else if ((*root)->left == NULL || (*root)->right == NULL) {
+            Tree_node* temp = *root;
+            if ((*root)->left != NULL) {
+                *root = (*root)->left;
+            } else {
+                *root = (*root)->right;
+            }
             free(temp);
         }
-        else if ((*root)->right == NULL) {
-            Tree_node* temp = (*root);
-            *root = (*root) ->left;
-            free(temp);
-        }
-        // case 2: two children
+        // case 3: two children
         else {
             Tree_node* succesor = succesor_node((*root)->right);
             (*root)->value = succesor->value;
