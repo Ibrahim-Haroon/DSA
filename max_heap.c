@@ -27,7 +27,9 @@ typedef struct heap_max{
 }Heap_max;
 bool maxHeap_isFull(HEAP_MAX heap); //private
 void maxHeap_increaseSize(HEAP_MAX Heap); //private
-void recursively_insert(Dynamic_Arr table, int value, int index); //private
+void maxHeap_recursively_insert(Dynamic_Arr table, int value, int index); //private
+void maxHeap_swap(int* a, int* b); //private
+bool maxHeap_recursively_contains(Dynamic_Arr table, int value, int index); //private
 
 HEAP_MAX maxHeap_init(void) {
     Heap_max* newHeap = (Heap_max*) malloc(sizeof(Heap_max));
@@ -74,14 +76,14 @@ bool maxHeap_isEmpty(HEAP_MAX heap) {
     return false;
 }
 
-void swap(int* a, int* b) {
+void maxHeap_swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
     *b = temp;
     return;
 }
 
-void recursively_insert(Dynamic_Arr table, int value, int index) {
+void maxHeap_recursively_insert(Dynamic_Arr table, int value, int index) {
     if (index == 0) {
         table.data[index] = value;
         return;
@@ -92,7 +94,7 @@ void recursively_insert(Dynamic_Arr table, int value, int index) {
         return;
     }
     table.data[index] = parent_value;
-    recursively_insert(table, value, (index - 1)/ 2); // -1 because 0 based indexing
+    maxHeap_recursively_insert(table, value, (index - 1)/ 2); // -1 because 0 based indexing
 
     return;
 }
@@ -104,14 +106,35 @@ void maxHeap_insert(HEAP_MAX heap, int value) {
         maxHeap ->table.data[maxHeap ->table.size++] = value;
     }
     else {
-        recursively_insert(maxHeap ->table, value, maxHeap ->table.size++);
+        maxHeap_recursively_insert(maxHeap ->table, value, maxHeap ->table.size++);
     }
     
     return;
 }
 
-bool maxHeap_contain(HEAP_MAX heap, int value);
-void maxHeap_replace(HEAP_MAX heap, int value);
+bool maxHeap_contain(HEAP_MAX heap, int value) {
+    if (heap == NULL || maxHeap_isEmpty(heap)) return false;
+    if (maxHeap_getMax(heap) == value) return true;
+    Heap_max* maxHeap = (Heap_max*)heap;
+    for (int i = 0; i < maxHeap ->table.size; i++) {
+        if (maxHeap ->table.data[i] == value) return true;
+    }
+    return false;
+}
+
+void maxHeap_replace(HEAP_MAX heap, int value) {
+    if (maxHeap_isEmpty(heap)) {
+        printf("Heap is Empty\n");
+        return;
+    }
+    Heap_max* maxHeap = (Heap_max*)heap;
+    int max = maxHeap_getMax(heap);
+    maxHeap ->table.data[0] = value;
+    if (max > value) {
+        maxHeap_heapify(heap); //ensure the max heap property is not violate
+    }
+    return;
+}
 
 int maxHeap_size(HEAP_MAX heap) {
     if (heap == NULL) {
