@@ -113,7 +113,7 @@ void insert_recursive(Tree_node** root, int value) {
     }
 
     // update height of current node
-    (*root)->height = 1 + max(getHeight((*root)->left), getHeight((*root)->right));
+    (*root)->height = max(getHeight((*root)->left), getHeight((*root)->right)) + 1;
     // calculate balance factor
     int balanceFactor = getBalanceFactor(*root);
 
@@ -149,11 +149,11 @@ void bst_insert(BST tree, int value) {
 }
 
 Tree_node* succesor_node(Tree_node* parent) {
-    Tree_node* current = parent->right;
-    while (current->left != NULL) {
-        current = current->left;
+    Tree_node* succesor = parent->right;
+    while (succesor->left != NULL) {
+        succesor = succesor->left;
     }
-    return current;
+    return succesor;
 }
 
 void remove_recursive(Tree_node** root, int value) {
@@ -166,17 +166,17 @@ void remove_recursive(Tree_node** root, int value) {
     else if (value > (*root) ->value) {
         remove_recursive((&(*root) ->right), value);
     }
-    else {
+    else { //value found
         // case 1: no child or one child
         if ((*root)->left == NULL) {
-            Tree_node* temp = (*root)->right;
-            free(*root);
-            *root = temp;
+            Tree_node* temp = (*root);
+            (*root) = (*root) ->right;
+            free(temp);
         }
         else if ((*root)->right == NULL) {
-            Tree_node* temp = (*root)->left;
-            free(*root);
-            *root = temp;
+            Tree_node* temp = (*root);
+            *root = (*root) ->left;
+            free(temp);
         }
         // case 2: two children
         else {
@@ -185,12 +185,12 @@ void remove_recursive(Tree_node** root, int value) {
             remove_recursive(&((*root)->right), succesor->value);
         }
     }
-    // update height of current node
+    //make sure tree is balanced
     if (*root != NULL) {
-        (*root)->height = 1 + max(getHeight((*root)->left), getHeight((*root)->right));
+        // update height of current node
+        (*root)->height = max(getHeight((*root)->left), getHeight((*root)->right)) + 1;
         // calculate balance factor
         int balanceFactor = getBalanceFactor(*root);
-
         // check if the tree is unbalanced
         if (balanceFactor > 1 && getBalanceFactor((*root)->left) >= 0) {
             // left-left case
@@ -218,7 +218,6 @@ void bst_remove(BST tree, int value) {
     remove_recursive(&(((Binary_tree*)tree)->root), value);
 }
 
-
 bool contains_recursive(Tree_node* root, int value) {
     if (root == NULL) {
         return false;
@@ -232,7 +231,6 @@ bool contains_recursive(Tree_node* root, int value) {
     else {
         return contains_recursive(root->right, value);
     }
-
     //never reaches
     return false;
 }
