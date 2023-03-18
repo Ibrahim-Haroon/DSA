@@ -10,9 +10,12 @@
 
 int main(int argc, char** argv) {
     BST test = bst_init();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 1; i <= 6; i++) {
         bst_insert(test, i);
     }
+    
+    bst_remove(test, 4);
+    bst_contains(test, 4) ? printf("YES\n") : printf("NO\n");
     bst_print(test);
     bst_destroy(&test);
     return 0;
