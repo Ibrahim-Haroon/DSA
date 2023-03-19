@@ -20,7 +20,6 @@ void maxHeap_replace(HEAP_MAX heap, int value);
 int maxHeap_size(HEAP_MAX heap);
 int maxHeap_getMax(HEAP_MAX heap);
 int maxHeap_extractMax(HEAP_MAX heap);
-void maxHeap_heapify(HEAP_MAX heap);
 void maxHeap_remove(HEAP_MAX heap, int value);
 void maxHeap_removeMax(HEAP_MAX heap);
 void maxHeap_print(HEAP_MAX heap);
