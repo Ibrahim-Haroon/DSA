@@ -5,18 +5,22 @@
 //  Created by Ibrahim Haroon on 3/14/23.
 //
 
+#include <stdlib.h>
 #include <stdio.h>
-#include "binary_tree.h"
+#include "max_heap.h"
 
 int main(int argc, char** argv) {
-    BST test = bst_init();
-    for (int i = 1; i <= 6; i++) {
-        bst_insert(test, i);
+    HEAP_MAX test = maxHeap_init();
+    for (int i = 0; i < 23; i++) {
+        maxHeap_insert(test, rand() % 100);
     }
-    
-    bst_remove(test, 4);
-    bst_contains(test, 4) ? printf("YES\n") : printf("NO\n");
-    bst_print(test);
-    bst_destroy(&test);
+    maxHeap_print(test);
+    maxHeap_contain(test, 54) ? printf("YES\n") : printf("No\n");
+    maxHeap_replace(test, 101);
+    for (int i = 0; i < 23; i++) {
+        printf("%d ", maxHeap_extractMax(test));
+    }
+    maxHeap_destroy(&test);
+    printf("\n");
     return 0;
 }
