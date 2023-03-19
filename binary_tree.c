@@ -205,11 +205,11 @@ void remove_recursive(Tree_node** root, int value) {
             (*root)->left = rotateLeft((*root)->left);
             *root = rotateRight(*root);
         }
-        else if (balanceFactor < -1 && getBalanceFactor((*root)->right) <= 0) {
+        else if (balanceFactor < -1 && getBalanceFactor((*root)->right) < 0) {
             // right-right case
             *root = rotateLeft(*root);
         }
-        else if (balanceFactor < -1 && getBalanceFactor((*root)->right) > 0) {
+        else if (balanceFactor < -1 && getBalanceFactor((*root)->right) >= 0) {
             // right-left case
             (*root)->right = rotateRight((*root)->right);
             *root = rotateLeft(*root);
