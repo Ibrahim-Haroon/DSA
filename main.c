@@ -7,20 +7,18 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "max_heap.h"
+#include "min_heap.h"
 
 int main(int argc, char** argv) {
-    HEAP_MAX test = maxHeap_init();
+    HEAP_MIN test = minHeap_init();
     for (int i = 0; i < 23; i++) {
-        maxHeap_insert(test, rand() % 100);
+        minHeap_insert(test, rand() % 100);
     }
-    maxHeap_print(test);
-    maxHeap_contain(test, 54) ? printf("YES\n") : printf("No\n");
-    maxHeap_replace(test, 101);
+    minHeap_print(test);
     for (int i = 0; i < 23; i++) {
-        printf("%d ", maxHeap_extractMax(test));
+        printf("%d ", minHeap_extractMin(test));
     }
-    maxHeap_destroy(&test);
+    minHeap_destroy(&test);
     printf("\n");
     return 0;
 }
