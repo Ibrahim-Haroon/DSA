@@ -29,7 +29,7 @@ bool maxHeap_isFull(HEAP_MAX heap); //private
 void maxHeap_increaseSize(HEAP_MAX Heap); //private
 void maxHeap_recursively_insert(Dynamic_Arr table, int value, int index); //private
 void maxHeap_swap(int* a, int* b); //private
-void maxHeap_removeRecusively(Dynamic_Arr table, int index); //private
+void maxHeap_heapify(Dynamic_Arr table, int index);
 
 HEAP_MAX maxHeap_init(void) {
     Heap_max* newHeap = (Heap_max*) malloc(sizeof(Heap_max));
@@ -131,7 +131,7 @@ void maxHeap_replace(HEAP_MAX heap, int value) {
     int max = maxHeap_getMax(heap);
     maxHeap ->table.data[0] = value;
     if (max > value) {
-        maxHeap_heapify(heap); //ensure the max heap property is not violated
+        maxHeap_heapify(maxHeap ->table, 0); //ensure the max heap property is not violated
     }
     return;
 }
@@ -158,35 +158,59 @@ int maxHeap_getMax(HEAP_MAX heap) {
 }
 
 int maxHeap_extractMax(HEAP_MAX heap) {
+    int max = maxHeap_getMax(heap);
     maxHeap_removeMax(heap);
-    return maxHeap_getMax(heap);
-}
-
-void maxHeap_heapify(HEAP_MAX heap) {
-    return;
+    return max;
 }
 
 void maxHeap_remove(HEAP_MAX heap, int value) {
+    if (heap == NULL || maxHeap_isEmpty(heap)) return;
+    Heap_max* maxHeap = (Heap_max*)heap;
+    
+    int index = -1; //invalid to know whether the value was found
+    for (int i = 0; i < maxHeap->table.size; i++) {
+        if (maxHeap->table.data[i] == value) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) {
+        printf("%d is not in the max heap!", value);
+        return;
+    }
+    
+    maxHeap->table.data[index] = maxHeap->table.data[maxHeap->table.size - 1];
+    maxHeap->table.size--;
+    //if the number to remove is the root or the max heap property is broken
+    if (index == 0 || maxHeap->table.data[index] < maxHeap->table.data[(index - 1) / 2]) {
+        maxHeap_heapify(maxHeap->table, index);
+    }
+    else {
+        //keep swapping the number (that will take the place of the deleted number) with its parent while it is greater
+        while (index > 0 && maxHeap->table.data[index] > maxHeap->table.data[(index - 1) / 2]) {
+            maxHeap_swap(&maxHeap->table.data[index], &maxHeap->table.data[(index - 1) / 2]);
+            index = (index - 1) / 2;
+        }
+    }
     return;
 }
 
-void maxHeap_removeRecusively(Dynamic_Arr table, int index) {
+void maxHeap_heapify(Dynamic_Arr table, int index) {
     int leftChild_index = (2 * index) + 1;
     int rightChild_index = (2 * index) + 2;
-    int largerIndex = index;
+    int largerNumber_index = index;
     //detetmine the largest number amoung children
     if (leftChild_index < table.size) {
-        largerIndex = table.data[leftChild_index] > table.data[largerIndex] ? leftChild_index : largerIndex;
+        largerNumber_index = table.data[leftChild_index] > table.data[largerNumber_index] ? leftChild_index : largerNumber_index;
     }
-    
     if (rightChild_index < table.size) {
-        largerIndex = table.data[rightChild_index] > table.data[largerIndex] ? rightChild_index : largerIndex;
+        largerNumber_index = table.data[rightChild_index] > table.data[largerNumber_index] ? rightChild_index : largerNumber_index;
     }
-    if (largerIndex == index) {
+    if (largerNumber_index == index) {
         return;
     }
-    maxHeap_swap(&table.data[index], &table.data[largerIndex]);
-    maxHeap_removeRecusively(table, largerIndex);
+    maxHeap_swap(&table.data[index], &table.data[largerNumber_index]);
+    maxHeap_heapify(table, largerNumber_index);
 }
 
 void maxHeap_removeMax(HEAP_MAX heap) {
@@ -196,7 +220,7 @@ void maxHeap_removeMax(HEAP_MAX heap) {
     maxHeap_swap(&maxHeap ->table.data[0], &maxHeap ->table.data[maxHeap ->table.size - 1]); //first swap max with last elemment to maintain a left complete tree
     maxHeap ->table.size--;
     
-    maxHeap_removeRecusively(maxHeap ->table, 0);
+    maxHeap_heapify(maxHeap ->table, 0);
     return;
 }
 
