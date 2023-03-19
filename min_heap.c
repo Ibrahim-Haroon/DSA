@@ -180,12 +180,12 @@ void minHeap_remove(HEAP_MIN heap, int value) {
     
     minHeap->table.data[index] = minHeap->table.data[minHeap ->table.size - 1];
     minHeap->table.size--;
-    //if the number to remove is the root or the max heap property is broken
+    //if the number to remove is the root or the min heap property is broken
     if (index == 0 || minHeap ->table.data[index] > minHeap ->table.data[(index - 1) / 2]) {
         minHeap_heapify(minHeap ->table, index);
     }
     else {
-        //keep swapping the number (that will take the place of the deleted number) with its parent while it is greater
+        //keep swapping the number (that will take the place of the deleted number) with its parent while it is less than
         while (index > 0 && minHeap ->table.data[index] < minHeap ->table.data[(index - 1) / 2]) {
             minHeap_swap(&minHeap ->table.data[index], &minHeap ->table.data[(index - 1) / 2]);
             index = (index - 1) / 2;
@@ -198,7 +198,7 @@ void minHeap_heapify(Dynamic_Array table, int index) {
     int leftChild_index = (2 * index) + 1;
     int rightChild_index = (2 * index) + 2;
     int smallerNumber_index = index;
-    //detetmine the smallesy number amoung children
+    //detetmine the smallest number amoung children
     if (leftChild_index < table.size) {
         smallerNumber_index = table.data[leftChild_index] < table.data[smallerNumber_index] ? leftChild_index : smallerNumber_index;
     }
