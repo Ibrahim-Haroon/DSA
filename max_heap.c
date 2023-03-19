@@ -168,8 +168,8 @@ void maxHeap_remove(HEAP_MAX heap, int value) {
     Heap_max* maxHeap = (Heap_max*)heap;
     
     int index = -1; //invalid to know whether the value was found
-    for (int i = 0; i < maxHeap->table.size; i++) {
-        if (maxHeap->table.data[i] == value) {
+    for (int i = 0; i < maxHeap ->table.size; i++) {
+        if (maxHeap ->table.data[i] == value) {
             index = i;
             break;
         }
@@ -179,16 +179,16 @@ void maxHeap_remove(HEAP_MAX heap, int value) {
         return;
     }
     
-    maxHeap->table.data[index] = maxHeap->table.data[maxHeap->table.size - 1];
-    maxHeap->table.size--;
+    maxHeap ->table.data[index] = maxHeap ->table.data[maxHeap ->table.size - 1];
+    maxHeap ->table.size--;
     //if the number to remove is the root or the max heap property is broken
-    if (index == 0 || maxHeap->table.data[index] < maxHeap->table.data[(index - 1) / 2]) {
-        maxHeap_heapify(maxHeap->table, index);
+    if (index == 0 || maxHeap ->table.data[index] < maxHeap ->table.data[(index - 1) / 2]) {
+        maxHeap_heapify(maxHeap ->table, index);
     }
     else {
         //keep swapping the number (that will take the place of the deleted number) with its parent while it is greater
-        while (index > 0 && maxHeap->table.data[index] > maxHeap->table.data[(index - 1) / 2]) {
-            maxHeap_swap(&maxHeap->table.data[index], &maxHeap->table.data[(index - 1) / 2]);
+        while (index > 0 && maxHeap ->table.data[index] > maxHeap ->table.data[(index - 1) / 2]) {
+            maxHeap_swap(&maxHeap ->table.data[index], &maxHeap ->table.data[(index - 1) / 2]);
             index = (index - 1) / 2;
         }
     }
