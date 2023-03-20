@@ -16,7 +16,7 @@
 typedef struct vertex {
     int item;
     int weight;
-    struct vertex* next;
+    struct vertex* edge;
 }Vertex;
 
 typedef struct graph{
@@ -64,8 +64,9 @@ void increase_adjagencyList_size(GRAPH graph) {
         while (weighted_graph ->adjagency_list[i] != NULL) {
             Vertex* temp = weighted_graph ->adjagency_list[i];
             Vertex* toInsert = createVertex(temp ->item, temp ->weight);
-            toInsert ->next = larger_adjagencyList[i];
+            toInsert ->edge = larger_adjagencyList[i];
             larger_adjagencyList[i] = toInsert;
+            weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i]->edge;
         }
     }
     free(weighted_graph ->adjagency_list);
@@ -90,7 +91,7 @@ Vertex* createVertex(int item, int weight) {
     
     newVertex ->item = item;
     newVertex ->weight = weight;
-    newVertex ->next = NULL;
+    newVertex ->edge = NULL;
     
     return newVertex;
 }
@@ -109,8 +110,8 @@ void graph_addConnection(GRAPH graph, int from, int to) {
         for (int i = 0; i < weighted_graph ->size; i++) {
             if (weighted_graph ->adjagency_list[i]->item == from) {
                 Vertex* toInsert = createVertex(to, 1); //set to 1 b/c in this case weight does not matter
-                toInsert ->next = weighted_graph ->adjagency_list[i] ->next;
-                weighted_graph ->adjagency_list[i] ->next = toInsert;
+                toInsert ->edge = weighted_graph ->adjagency_list[i] ->edge;
+                weighted_graph ->adjagency_list[i] ->edge = toInsert;
             }
         }
     }
@@ -140,7 +141,7 @@ bool graph_isConnected(GRAPH graph, int from, int to) {
                 if (temp ->item == to) {
                     return true;
                 }
-                temp = temp ->next;
+                temp = temp ->edge;
             }
         }
     }
@@ -159,13 +160,13 @@ void graph_removeConnection(GRAPH graph, int from, int to) {
             Vertex* slow = fast;
             while (fast != NULL && fast ->item != to) {
                 slow = fast;
-                fast = fast ->next;
+                fast = fast ->edge;
             }
             if (fast == NULL) {
                 printf("Invalid, connection from %d to %d never existed\n", from, to);
                 return;
             }
-            slow ->next = fast ->next;
+            slow ->edge = fast ->edge;
             free(fast);
             fast = NULL;
         }
@@ -181,10 +182,10 @@ void graph_removeVertex(GRAPH graph, int item) {
     Graph* weighted_graph = (Graph*)graph;
     for (int i = 0; i < weighted_graph ->size; i++) {
         if (weighted_graph ->adjagency_list[i]->item == item) {
-            if (weighted_graph ->adjagency_list[i] ->next != NULL) {
+            if (weighted_graph ->adjagency_list[i] ->edge != NULL) {
                 while (weighted_graph ->adjagency_list[i] != NULL) {
                     Vertex* temp = weighted_graph ->adjagency_list[i];
-                    weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i] ->next;
+                    weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i] ->edge;
                     free(temp);
                 }
             }
@@ -217,11 +218,11 @@ void graph_bfs(GRAPH graph) {
 
 void graph_destroy(GRAPH* graph) {
     if (!graph_isEmpty(*graph)) {
-        Graph* weighted_graph = (Graph*)graph;
+        Graph* weighted_graph = (Graph*)*graph;
         for (int i = 0; i < weighted_graph ->size; i++) {
             while (weighted_graph ->adjagency_list[i] != NULL) {
                 Vertex* temp = weighted_graph ->adjagency_list[i];
-                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i]->next;
+                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i]->edge;
                 free(temp);
             }
         }
