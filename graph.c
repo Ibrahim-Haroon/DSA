@@ -196,14 +196,30 @@ void graph_removeVertex(GRAPH graph, int item) {
     return;
 }
 
-int* graph_getAdjacentVerticies(GRAPH graph, int from) {
+LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
+    if (graph_isEmpty(graph)) {
+        printf("Invalid, EMPTY graph\n");
+        return NULL;
+    }
     Graph* weighted_graph = (Graph*)graph;
+    LIST adjacent_vertices = list_init();
+    for (int i = 0; i < weighted_graph ->size; i++) {
+        if (weighted_graph ->adjagency_list[i]->item == from) {
+            Vertex* temp = weighted_graph ->adjagency_list[i];
+            while (temp != NULL) {
+                list_add(adjacent_vertices, temp ->item);
+                temp = temp ->edge;
+            }
+            return adjacent_vertices;
+        }
+    }
+    printf("Vertex %d is not in graph\n", from);
     return NULL;
 }
 
-void graph_shortestPath(GRAPH graph, int from, int to) {
+int graph_shortestPath(GRAPH graph, int from, int to) {
     Graph* weighted_graph = (Graph*)graph;
-    return;
+    return -1;
 }
 
 void graph_dfs(GRAPH graph) {
