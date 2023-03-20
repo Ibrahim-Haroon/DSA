@@ -14,10 +14,10 @@ typedef struct list{
     int capacity;
     int* data;
 }List;
-bool isFull(LIST list); //private method
-void increase_size(LIST list); //private method
+bool list_isFull(LIST list); //private method
+void list_increase_size(LIST list); //private method
 
-bool isEmpty(LIST list);
+bool list_isEmpty(LIST list);
 
 LIST list_init(void) {
     List* newList = (List*) malloc(sizeof(List));
@@ -37,19 +37,19 @@ LIST list_init(void) {
     
 }
 
-bool isEmpty(LIST list) {
+bool list_isEmpty(LIST list) {
     List* curr_list = (List*)list;
     return !curr_list ->size;
 }
 
-bool isFull(LIST list) {
+bool list_isFull(LIST list) {
     List* curr_list = (List*)list;
     if (curr_list ->size >= curr_list ->capacity) return true;
     return false;
 }
 
 #define LOAD_FACTOR (2)
-void increase_size(LIST list) {
+void list_increase_size(LIST list) {
     List* curr_list = (List*)list;
     int* bigger_data = (int*) malloc(sizeof(int) * (curr_list ->capacity * LOAD_FACTOR));
     if (bigger_data == NULL) {
@@ -66,13 +66,13 @@ void increase_size(LIST list) {
 }
 
 void list_add(LIST list, int num) {
-    if (isFull(list)) increase_size(list);
+    if (list_isFull(list)) list_increase_size(list);
     List* curr_list = (List*)list;
     curr_list ->data[curr_list ->size++] = num;
 }
 
 void list_remove(LIST list, int num) {
-    if (isEmpty(list)) {
+    if (list_isEmpty(list)) {
         printf("Cannot remove from empty list\n");
         return;
     }
@@ -104,7 +104,7 @@ void list_remove(LIST list, int num) {
 }
 
 bool list_contains(LIST list, int num) {
-    if (isEmpty(list)) return false;
+    if (list_isEmpty(list)) return false;
     List* curr_list = (List*)list;
     for (int i = 0; i < curr_list ->size; i++) {
         if (curr_list ->data[i] == num) return true;
@@ -113,7 +113,7 @@ bool list_contains(LIST list, int num) {
 }
 
 void list_num_at(LIST list, int index) {
-    if (isEmpty(list)) {
+    if (list_isEmpty(list)) {
         printf("Empty list\n");
         return;
     }
@@ -127,8 +127,8 @@ void list_num_at(LIST list, int index) {
     
 }
 
-void print_list(LIST list) {
-    if (isEmpty(list)) {
+void list_print(LIST list) {
+    if (list_isEmpty(list)) {
         printf("[EMPTY]\n");
         return;
     }
@@ -145,7 +145,7 @@ void print_list(LIST list) {
 }
 
 void list_destroy(LIST* list) {
-    if (isEmpty(list)) {
+    if (list_isEmpty(list)) {
         free(*list);
         *list = NULL;
         return;
