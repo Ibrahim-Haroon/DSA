@@ -9,7 +9,7 @@
  if NODE is at index i then:
     left child @ (2 * i) + 1
     right child @ (2 * i) + 2
-    parent @ floor(i / 2)
+    parent @ floor((i - 1) / 2)
  */
 
 #include "min_heap.h"
