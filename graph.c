@@ -24,9 +24,9 @@ typedef struct graph{
     int capacity;
     Vertex** adjagency_list; //** because adjagency_list has to grow vertically and horizontally
 }Graph;
-bool graph_isFull(GRAPH graph);                 //private
-void increase_adjagencyList_size(GRAPH graph); //private
-Vertex* createVertex(int item, int weight);    //private
+static bool graph_isFull(GRAPH graph);                 //private
+static void increase_adjagencyList_size(GRAPH graph); //private
+static Vertex* createVertex(int item, int weight);    //private
 
 
 GRAPH graph_init(void) {
@@ -37,7 +37,7 @@ GRAPH graph_init(void) {
     }
     newGraph ->size = 0;
     newGraph ->capacity = 1;
-    newGraph ->adjagency_list = (Vertex**) calloc((newGraph ->capacity), sizeof(Vertex*));
+    newGraph ->adjagency_list = (Vertex**) calloc(sizeof(Vertex*), (newGraph ->capacity));
     if (newGraph ->adjagency_list == NULL) {
         fprintf(stderr, "Failed to allocate space for adjagency list\n");
         free(newGraph);
@@ -47,7 +47,7 @@ GRAPH graph_init(void) {
     return newGraph;
 }
 
-bool graph_isFull(GRAPH graph) {
+static bool graph_isFull(GRAPH graph) {
     Graph* weighted_graph = (Graph*)graph;
     if (weighted_graph ->size >= weighted_graph ->capacity) {
         return true;
@@ -56,9 +56,9 @@ bool graph_isFull(GRAPH graph) {
 }
 
 #define LOAD_FACTOR (2)
-void increase_adjagencyList_size(GRAPH graph) {
+static void increase_adjagencyList_size(GRAPH graph) {
     Graph* weighted_graph = (Graph*)graph;
-    Vertex** larger_adjagencyList = (Vertex**) calloc((weighted_graph ->capacity * LOAD_FACTOR), sizeof(Vertex*));
+    Vertex** larger_adjagencyList = (Vertex**) calloc(sizeof(Vertex*), (weighted_graph ->capacity * LOAD_FACTOR));
     for (int i = 0; i < weighted_graph ->size; i++) {
         larger_adjagencyList[i] = weighted_graph ->adjagency_list[i];
         while (weighted_graph ->adjagency_list[i] != NULL) {
@@ -82,7 +82,7 @@ bool graph_isEmpty(GRAPH graph) {
     return false;
 }
 
-Vertex* createVertex(int item, int weight) {
+static Vertex* createVertex(int item, int weight) {
     Vertex* newVertex = (Vertex*) malloc(sizeof(Vertex));
     if (newVertex == NULL) {
         fprintf(stderr, "Failed to allocate space for a new vector");
@@ -112,10 +112,11 @@ void graph_addConnection(GRAPH graph, int from, int to) {
                 Vertex* toInsert = createVertex(to, 1); //set to 1 b/c in this case weight does not matter
                 toInsert ->edge = weighted_graph ->adjagency_list[i] ->edge;
                 weighted_graph ->adjagency_list[i] ->edge = toInsert;
+                return;
             }
         }
     }
-    else printf("Invalid, one of the vertices do not exits");
+    else printf("Invalid, one of the vertices do not exits\n");
     return;
 }
 
@@ -206,7 +207,7 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
     for (int i = 0; i < weighted_graph ->size; i++) {
         if (weighted_graph ->adjagency_list[i]->item == from) {
             Vertex* temp = weighted_graph ->adjagency_list[i];
-            while (temp != NULL) {
+            while (temp ->edge != NULL) {
                 list_add(adjacent_vertices, temp ->item);
                 temp = temp ->edge;
             }
@@ -218,17 +219,17 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
 }
 
 int graph_shortestPath(GRAPH graph, int from, int to) {
-    Graph* weighted_graph = (Graph*)graph;
+    //Graph* weighted_graph = (Graph*)graph;
     return -1;
 }
 
 void graph_dfs(GRAPH graph) {
-    Graph* weighted_graph = (Graph*)graph;
+    //Graph* weighted_graph = (Graph*)graph;
     return;
 }
 
 void graph_bfs(GRAPH graph) {
-    Graph* weighted_graph = (Graph*)graph;
+    //Graph* weighted_graph = (Graph*)graph;
     return;
 }
 
