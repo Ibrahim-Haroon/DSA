@@ -5,20 +5,23 @@
 //  Created by Ibrahim Haroon on 3/14/23.
 //
 
-#include <stdlib.h>
 #include <stdio.h>
-#include "min_heap.h"
+#include <stdlib.h>
+#include "graph.h"
+
 
 int main(int argc, char** argv) {
-    HEAP_MIN test = minHeap_init();
-    for (int i = 0; i < 23; i++) {
-        minHeap_insert(test, rand() % 100);
+    GRAPH test = graph_init();
+    for (int i = 1; i <= 10; i++) {
+        graph_addVertex(test, i, rand() % 20);
     }
-    minHeap_print(test);
-    for (int i = 0; i < 23; i++) {
-        printf("%d ", minHeap_extractMin(test));
-    }
-    minHeap_destroy(&test);
-    printf("\n");
+    graph_addConnection(test, 1, 2);
+    graph_addConnection(test, 1, 8);
+    graph_addConnection(test, 1, 5);
+    list_print(graph_getAdjacentVerticies(test, 1));
+    graph_destroy(&test);
     return 0;
 }
+
+
+//graph_isConnected(test, 1, 8) ? printf("YES\n") : printf("No\n");
