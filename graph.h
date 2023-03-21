@@ -25,6 +25,7 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from);
 int graph_shortestPath(GRAPH graph, int from, int to);
 void graph_dfs(GRAPH graph);
 void graph_bfs(GRAPH graph);
+LIST topological_sort(GRAPH graph);
 void graph_destroy(GRAPH* graph);
 
 #endif /* graph_h */
