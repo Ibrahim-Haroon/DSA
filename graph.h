@@ -8,6 +8,7 @@
 #ifndef graph_h
 #define graph_h
 
+#include "dynamic_array.h"
 #include <stdbool.h>
 
 typedef void* GRAPH;
@@ -20,8 +21,8 @@ bool graph_containsVertex(GRAPH graph, int item);
 bool graph_isConnected(GRAPH graph, int from, int to);
 void graph_removeConnection(GRAPH graph, int from, int to);
 void graph_removeVertex(GRAPH graph, int item);
-int* graph_getAdjacentVerticies(GRAPH graph, int from);
-void graph_shortestPath(GRAPH graph, int from, int to);
+LIST graph_getAdjacentVerticies(GRAPH graph, int from);
+int graph_shortestPath(GRAPH graph, int from, int to);
 void graph_dfs(GRAPH graph);
 void graph_bfs(GRAPH graph);
 void graph_destroy(GRAPH* graph);
