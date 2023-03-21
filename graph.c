@@ -219,18 +219,38 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
 }
 
 int graph_shortestPath(GRAPH graph, int from, int to) {
-    //Graph* weighted_graph = (Graph*)graph;
-    return -1;
+    if (graph_isEmpty(graph)) {
+        printf("EMPTY graph\n");
+        return -1;
+    }
+    Graph* weighted_graph = (Graph*)graph;
+    return 1;
 }
 
 void graph_dfs(GRAPH graph) {
-    //Graph* weighted_graph = (Graph*)graph;
+    if (graph_isEmpty(graph)) {
+        printf("EMPTY graph\n");
+        return;
+    }
+    Graph* weighted_graph = (Graph*)graph;
     return;
 }
 
 void graph_bfs(GRAPH graph) {
-    //Graph* weighted_graph = (Graph*)graph;
+    if (graph_isEmpty(graph)) {
+        printf("EMPTY graph\n");
+        return;
+    }
+    Graph* weighted_graph = (Graph*)graph;
     return;
+}
+
+LIST topological_sort(GRAPH graph) {
+    if (graph_isEmpty(graph)) {
+        return NULL;
+    }
+    LIST sorted = list_init();
+    return sorted;
 }
 
 void graph_destroy(GRAPH* graph) {
