@@ -13,10 +13,10 @@ typedef struct node_set { //differentiate between different node structs
     int key;
     struct node_set* next;
 }Node_Set;
-unsigned int hash_function(unsigned int key, HashSet hashset); //private
-bool hashMap_isFull(HashSet hashset);                //private
-void increase_set_size(HashSet hashset);          //private
-Node_Set* create_node_set(int key);        //private
+static unsigned int hash_function(unsigned int key, HashSet hashset); //private
+static bool hashMap_isFull(HashSet hashset);                //private
+static void increase_set_size(HashSet hashset);          //private
+static Node_Set* create_node_set(int key);        //private
 
 typedef struct set{
     int size;

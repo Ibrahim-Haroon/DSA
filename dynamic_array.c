@@ -14,8 +14,8 @@ typedef struct list{
     int capacity;
     int* data;
 }List;
-bool list_isFull(LIST list); //private method
-void list_increase_size(LIST list); //private method
+static bool list_isFull(LIST list); //private method
+static void list_increase_size(LIST list); //private method
 
 bool list_isEmpty(LIST list);
 
@@ -37,13 +37,13 @@ LIST list_init(void) {
     
 }
 
-bool list_isEmpty(LIST list) {
+ bool list_isEmpty(LIST list) {
     if (list == NULL) return false;
     List* curr_list = (List*)list;
     return !curr_list ->size;
 }
 
-bool list_isFull(LIST list) {
+static bool list_isFull(LIST list) {
     List* curr_list = (List*)list;
     if (curr_list ->size >= curr_list ->capacity) return true;
     return false;

@@ -19,8 +19,7 @@ typedef struct queue{
     Node_q* head;
     Node_q* tail;
 }Queue;
-
-Node_q* create_queue_node(int num); //private
+static Node_q* create_queue_node(int num); //private
 
 QUEUE queue_init(void) {
     Queue* newQueue = (Queue*) malloc(sizeof(Queue));
@@ -63,7 +62,7 @@ void enqueue(QUEUE queue, int num) {
     current_queue ->head = toInsert;
 }
 
-Node_q* create_queue_node(int num) {
+static Node_q* create_queue_node(int num) {
     Node_q* newNode = (Node_q*) malloc(sizeof(Node_q));
     if (newNode == NULL) {
         printf("Heap is FULL\n");

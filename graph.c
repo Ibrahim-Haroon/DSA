@@ -47,7 +47,7 @@ GRAPH graph_init(void) {
     return newGraph;
 }
 
-static bool graph_isFull(GRAPH graph) {
+bool graph_isFull(GRAPH graph) {
     Graph* weighted_graph = (Graph*)graph;
     if (weighted_graph ->size >= weighted_graph ->capacity) {
         return true;
@@ -56,7 +56,7 @@ static bool graph_isFull(GRAPH graph) {
 }
 
 #define LOAD_FACTOR (2)
-static void increase_adjagencyList_size(GRAPH graph) {
+void increase_adjagencyList_size(GRAPH graph) {
     Graph* weighted_graph = (Graph*)graph;
     Vertex** larger_adjagencyList = (Vertex**) calloc(sizeof(Vertex*), (weighted_graph ->capacity * LOAD_FACTOR));
     for (int i = 0; i < weighted_graph ->size; i++) {

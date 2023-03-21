@@ -17,7 +17,7 @@ typedef struct node_s{
 typedef struct stack{
     Node_s* top;
 }Stack;
-Node_s* create_stack_node(int num); //private
+static Node_s* create_stack_node(int num); //private
 
 STACK stack_init(void) {
     Stack* newStack = (Stack*) malloc(sizeof(Stack));

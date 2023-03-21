@@ -25,11 +25,11 @@ typedef struct dynamic_array{
 typedef struct heap_min{
     Dynamic_Array table;
 }Heap_min;
-bool minHeap_isFull(HEAP_MIN heap); //private
-void minHeap_increaseSize(HEAP_MIN Heap); //private
-void minHeap_recursively_insert(Dynamic_Array table, int value, int index); //private
-void minHeap_swap(int* a, int* b); //private
-void minHeap_heapify(Dynamic_Array table, int index); //private
+static bool minHeap_isFull(HEAP_MIN heap); //private
+static void minHeap_increaseSize(HEAP_MIN Heap); //private
+static void minHeap_recursively_insert(Dynamic_Array table, int value, int index); //private
+static void minHeap_swap(int* a, int* b); //private
+static void minHeap_heapify(Dynamic_Array table, int index); //private
 
 HEAP_MIN minHeap_init(void) {
     Heap_min* newHeap = (Heap_min*) malloc(sizeof(Heap_min));

@@ -20,9 +20,9 @@ typedef struct trieNode{
 typedef struct trie{
     TrieNode* root;
 }Trie;
-TrieNode* createTrieNode(void); //private
-void print_trie_recursive(TrieNode* currNode, StringBuilder prefix); //private
-void destroy_trie_recursive(TrieNode* currNode); //private
+static TrieNode* createTrieNode(void); //private
+static void print_trie_recursive(TrieNode* currNode, StringBuilder prefix); //private
+static void destroy_trie_recursive(TrieNode* currNode); //private
 
 TRIE trie_init(void) {
     Trie* newTrie = (Trie*) malloc(sizeof(Trie));

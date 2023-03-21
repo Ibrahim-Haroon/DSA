@@ -14,10 +14,10 @@ typedef struct node_m { //_m for map node
     int value;
     struct node_m* next;
 }Node_m;
-unsigned int hash(unsigned int key, HashMap hashmap); //private
-bool hashMap_isFull(HashMap hashmap);                //private
-void increase_table_size(HashMap hashmap);          //private
-Node_m* create_node_m(int key, int value);          //private
+static unsigned int hash(unsigned int key, HashMap hashmap); //private
+static bool hashMap_isFull(HashMap hashmap);                //private
+static void increase_table_size(HashMap hashmap);          //private
+static Node_m* create_node_m(int key, int value);          //private
 
 typedef struct map{
     int size;

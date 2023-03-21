@@ -15,8 +15,8 @@ typedef struct string{
     int capacity;
     char* word;
 }String;
-bool string_isFull(StringBuilder string);      //private
-void increaseStringSize(StringBuilder string);//private
+static bool string_isFull(StringBuilder string);      //private
+static void increaseStringSize(StringBuilder string);//private
 
 StringBuilder stringBuilder_init(void) {
     String* string = (String*) malloc(sizeof(String));

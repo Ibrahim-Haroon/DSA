@@ -13,7 +13,7 @@ typedef struct node{
     int value;
     struct node* next;
 }Node;
-Node* create_node(int num); //private
+static Node* create_node(int num); //private
 
 SINGLY_LINKED_LIST ll_init(void) {
     Node* newLinkedList = (Node*) malloc(sizeof(Node));

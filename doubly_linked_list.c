@@ -14,7 +14,7 @@ typedef struct node_d{
     struct node_d* next;
     struct node_d* prev;
 }Node_d;
-Node_d* create_node_double(int num); //private
+static Node_d* create_node_double(int num); //private
 
 DOUBLY_LINKED_LIST dll_init(void) {
     Node_d* newLinkedList = (Node_d*) malloc(sizeof(Node_d));

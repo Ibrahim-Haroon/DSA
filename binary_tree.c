@@ -19,16 +19,16 @@ typedef struct tree_node{
 typedef struct bst{
     Tree_node* root;
 }Binary_tree;
-Tree_node* create_treeNode(int value);          //private
-int getHeight(Tree_node* root);                 //private
-int getBalanceFactor(Tree_node* root);          //private
-Tree_node* rotateLeft(Tree_node* parent);       //private
-Tree_node* rotateRight(Tree_node* parent);      //private
-void insert_recursive(Tree_node** root, int value);  //private
-void remove_recursive(Tree_node** root, int value); //private
-bool contains_recursive(Tree_node* root, int value); //private
-void print_recursive(Tree_node* root, int space);   //private
-void destroy_recursive(Tree_node* root);          //private
+static Tree_node* create_treeNode(int value);          //private
+static int getHeight(Tree_node* root);                 //private
+static int getBalanceFactor(Tree_node* root);          //private
+static Tree_node* rotateLeft(Tree_node* parent);       //private
+static Tree_node* rotateRight(Tree_node* parent);      //private
+static void insert_recursive(Tree_node** root, int value);  //private
+static void remove_recursive(Tree_node** root, int value); //private
+static bool contains_recursive(Tree_node* root, int value); //private
+static void print_recursive(Tree_node* root, int space);   //private
+static void destroy_recursive(Tree_node* root);          //private
 
 
 BST bst_init(void) {

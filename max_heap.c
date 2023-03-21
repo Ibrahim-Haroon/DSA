@@ -25,11 +25,11 @@ typedef struct dynamic_arr{
 typedef struct heap_max{
     Dynamic_Arr table;
 }Heap_max;
-bool maxHeap_isFull(HEAP_MAX heap); //private
-void maxHeap_increaseSize(HEAP_MAX Heap); //private
-void maxHeap_recursively_insert(Dynamic_Arr table, int value, int index); //private
-void maxHeap_swap(int* a, int* b); //private
-void maxHeap_heapify(Dynamic_Arr table, int index);
+static bool maxHeap_isFull(HEAP_MAX heap); //private
+static void maxHeap_increaseSize(HEAP_MAX Heap); //private
+static void maxHeap_recursively_insert(Dynamic_Arr table, int value, int index); //private
+static void maxHeap_swap(int* a, int* b); //private
+static void maxHeap_heapify(Dynamic_Arr table, int index);
 
 HEAP_MAX maxHeap_init(void) {
     Heap_max* newHeap = (Heap_max*) malloc(sizeof(Heap_max));
