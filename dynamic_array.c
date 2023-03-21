@@ -38,6 +38,7 @@ LIST list_init(void) {
 }
 
 bool list_isEmpty(LIST list) {
+    if (list == NULL) return false;
     List* curr_list = (List*)list;
     return !curr_list ->size;
 }
