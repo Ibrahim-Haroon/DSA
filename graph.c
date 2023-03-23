@@ -127,7 +127,7 @@ bool graph_containsVertex(GRAPH graph, int item) {
     Graph* weighted_graph = (Graph*)graph;
     for (int i = 0; i < weighted_graph ->size; i++) {
         if (weighted_graph ->adjagency_list[i] == NULL) continue;
-        else if (weighted_graph ->adjagency_list[i]->item == item) {
+        if (weighted_graph ->adjagency_list[i]->item == item) {
             return true;
         }
     }
@@ -138,6 +138,7 @@ bool graph_isConnected(GRAPH graph, int from, int to) {
     if (graph_isEmpty(graph)) return false;
     Graph* weighted_graph = (Graph*)graph;
     for (int i = 0; i < weighted_graph ->size; i++) {
+        if (weighted_graph ->adjagency_list[i] == NULL) continue;
         if (weighted_graph ->adjagency_list[i]->item == from) {
             Vertex* temp = weighted_graph ->adjagency_list[i];
             while (temp != NULL) {
@@ -158,6 +159,7 @@ void graph_removeConnection(GRAPH graph, int from, int to) {
     }
     Graph* weighted_graph = (Graph*)graph;
     for (int i = 0; i < weighted_graph ->size; i++) {
+        if (weighted_graph ->adjagency_list[i] == NULL) continue;
         if (weighted_graph ->adjagency_list[i]->item == from) {
             Vertex* fast = weighted_graph ->adjagency_list[i];
             Vertex* slow = fast;
@@ -184,17 +186,16 @@ void graph_removeVertex(GRAPH graph, int item) {
     }
     Graph* weighted_graph = (Graph*)graph;
     for (int i = 0; i < weighted_graph ->size; i++) {
+        if (weighted_graph ->adjagency_list[i] ->edge == NULL) continue;
         if (weighted_graph ->adjagency_list[i]->item == item) {
-            if (weighted_graph ->adjagency_list[i] ->edge != NULL) {
-                while (weighted_graph ->adjagency_list[i] != NULL) {
-                    Vertex* temp = weighted_graph ->adjagency_list[i];
-                    weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i] ->edge;
-                    free(temp);
-                }
+            while (weighted_graph ->adjagency_list[i] != NULL) {
+                Vertex* temp = weighted_graph ->adjagency_list[i];
+                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i] ->edge;
+                free(temp);
             }
-            free(weighted_graph ->adjagency_list[i]);
-            weighted_graph ->adjagency_list[i] = NULL;
         }
+        free(weighted_graph ->adjagency_list[i]);
+        weighted_graph ->adjagency_list[i] = NULL;
     }
     return;
 }
