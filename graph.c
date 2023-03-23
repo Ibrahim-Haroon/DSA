@@ -61,12 +61,14 @@ void increase_adjagencyList_size(GRAPH graph) {
     Vertex** larger_adjagencyList = (Vertex**) calloc(sizeof(Vertex*), (weighted_graph ->capacity * LOAD_FACTOR));
     for (int i = 0; i < weighted_graph ->size; i++) {
         larger_adjagencyList[i] = weighted_graph ->adjagency_list[i];
-        while (weighted_graph ->adjagency_list[i] != NULL) {
-            Vertex* temp = weighted_graph ->adjagency_list[i];
-            Vertex* toInsert = createVertex(temp ->item, temp ->weight);
-            toInsert ->edge = larger_adjagencyList[i];
-            larger_adjagencyList[i] = toInsert;
-            weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i]->edge;
+        Vertex* toInsert = createVertex(weighted_graph ->adjagency_list[i]->item, weighted_graph ->adjagency_list[i] ->weight);
+        larger_adjagencyList[i] = toInsert;
+        Vertex* temp = weighted_graph ->adjagency_list[i]->edge;
+        while (temp != NULL) {
+            toInsert = createVertex(temp ->item, temp ->weight);
+            toInsert ->edge = larger_adjagencyList[i] ->edge;
+            larger_adjagencyList[i] ->edge = toInsert;
+            temp = temp ->edge;
         }
     }
     free(weighted_graph ->adjagency_list);
@@ -207,7 +209,7 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
     for (int i = 0; i < weighted_graph ->size; i++) {
         if (weighted_graph ->adjagency_list[i]->item == from) {
             Vertex* temp = weighted_graph ->adjagency_list[i];
-            while (temp ->edge != NULL) {
+            while (temp != NULL) {
                 list_add(adjacent_vertices, temp ->item);
                 temp = temp ->edge;
             }
