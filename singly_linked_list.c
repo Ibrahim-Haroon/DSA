@@ -67,13 +67,13 @@ void ll_remove(SINGLY_LINKED_LIST* head) {
 }
 
 void ll_remove_num(SINGLY_LINKED_LIST* head, int num) {
-    if (ll_isEmpty(head)) return;
+    if (ll_isEmpty(*head)) return;
     Node** linker = (Node**)head;
     Node* slow = *linker;
     Node* fast = *linker;
     
     if (fast ->next->value == num) { //remove head of linked list
-        ll_remove(head);
+        ll_remove(*head);
         return;
     }
     
