@@ -27,9 +27,10 @@ typedef struct heap_min{
 }Heap_min;
 static bool minHeap_isFull(HEAP_MIN heap); //private
 static void minHeap_increaseSize(HEAP_MIN Heap); //private
-static void minHeap_recursively_insert(Dynamic_Array table, int value, int index); //private
+static void minHeap_fix_up(Dynamic_Array table, int value, int index); //private
 static void minHeap_swap(int* a, int* b); //private
-static void minHeap_heapify(Dynamic_Array table, int index); //private
+static void minHeap_fix_down(Dynamic_Array table, int index); //private
+static void minHeap_heapify(Dynamic_Array table); //private
 
 HEAP_MIN minHeap_init(void) {
     Heap_min* newHeap = (Heap_min*) malloc(sizeof(Heap_min));
@@ -83,7 +84,7 @@ void minHeap_swap(int* a, int* b) {
     return;
 }
 
-void minHeap_recursively_insert(Dynamic_Array table, int value, int index) {
+void minHeap_fix_up(Dynamic_Array table, int value, int index) {
     if (index == 0) {
         table.data[index] = value;
         return;
@@ -94,7 +95,7 @@ void minHeap_recursively_insert(Dynamic_Array table, int value, int index) {
         return;
     }
     table.data[index] = parent_value;
-    minHeap_recursively_insert(table, value, (index - 1)/ 2); // -1 because 0 based indexing
+    minHeap_fix_up(table, value, (index - 1)/ 2); // -1 because 0 based indexing
 
     return;
 }
@@ -106,7 +107,7 @@ void minHeap_insert(HEAP_MIN heap, int value) {
         minHeap ->table.data[minHeap ->table.size++] = value;
     }
     else {
-        minHeap_recursively_insert(minHeap ->table, value, minHeap ->table.size++);
+        minHeap_fix_up(minHeap ->table, value, minHeap ->table.size++);
     }
     return;
 }
@@ -130,7 +131,7 @@ void minHeap_replace(HEAP_MIN heap, int value) {
     int min = minHeap_getMin(heap);
     minHeap ->table.data[0] = value;
     if (min < value) {
-        minHeap_heapify(minHeap ->table, 0); //ensure the min heap property is not violated
+        minHeap_fix_down(minHeap ->table, 0); //ensure the min heap property is not violated
     }
     return;
 }
@@ -182,7 +183,7 @@ void minHeap_remove(HEAP_MIN heap, int value) {
     minHeap->table.size--;
     //if the number to remove is the root or the min heap property is broken
     if (index == 0 || minHeap ->table.data[index] > minHeap ->table.data[(index - 1) / 2]) {
-        minHeap_heapify(minHeap ->table, index);
+        minHeap_fix_down(minHeap ->table, index);
     }
     else {
         //keep swapping the number (that will take the place of the deleted number) with its parent while it is less than
@@ -194,7 +195,7 @@ void minHeap_remove(HEAP_MIN heap, int value) {
     return;
 }
 
-void minHeap_heapify(Dynamic_Array table, int index) {
+void minHeap_fix_down(Dynamic_Array table, int index) {
     int leftChild_index = (2 * index) + 1;
     int rightChild_index = (2 * index) + 2;
     int smallerNumber_index = index;
@@ -209,7 +210,14 @@ void minHeap_heapify(Dynamic_Array table, int index) {
         return;
     }
     minHeap_swap(&table.data[index], &table.data[smallerNumber_index]);
-    minHeap_heapify(table, smallerNumber_index);
+    minHeap_fix_down(table, smallerNumber_index);
+}
+
+void minHeap_heapify(Dynamic_Array table) {
+    for (int i = 0; i < table.size; i++) {
+        minHeap_fix_down(table, i);
+    }
+    return;
 }
 
 void minHeap_removeMin(HEAP_MIN heap) {
@@ -219,7 +227,7 @@ void minHeap_removeMin(HEAP_MIN heap) {
     minHeap_swap(&minHeap ->table.data[0], &minHeap ->table.data[minHeap ->table.size - 1]); //first swap max with last elemment to maintain a left complete tree
     minHeap ->table.size--;
     
-    minHeap_heapify(minHeap ->table, 0);
+    minHeap_fix_down(minHeap ->table, 0);
     return;
 }
 
