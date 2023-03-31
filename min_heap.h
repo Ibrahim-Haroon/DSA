@@ -22,7 +22,7 @@ int minHeap_getMin(HEAP_MIN heap);
 int minHeap_extractMin(HEAP_MIN heap);
 void minHeap_remove(HEAP_MIN heap, int value);
 void minHeap_removeMin(HEAP_MIN heap);
-void minHeap_heapify(int* array, int size);
+void minHeap_heapify(HEAP_MIN heap, int* array, int size);
 void minHeap_print(HEAP_MIN heap);
 void minHeap_destroy(HEAP_MIN* heap);
 
