@@ -30,7 +30,6 @@ static void maxHeap_increaseSize(HEAP_MAX Heap); //private
 static void maxHeap_fix_up(Dynamic_Arr table, int value, int index); //private
 static void maxHeap_swap(int* a, int* b); //private
 static void maxHeap_fix_down(Dynamic_Arr table, int index); //private
-static void maxHeap_heapify(Dynamic_Arr table); //private
 
 HEAP_MAX maxHeap_init(void) {
     Heap_max* newHeap = (Heap_max*) malloc(sizeof(Heap_max));
@@ -196,9 +195,24 @@ void maxHeap_remove(HEAP_MAX heap, int value) {
     return;
 }
 
-void maxHeap_heapify(Dynamic_Arr table) {
-    for (int i = 0; i < table.size; i++) {
-        maxHeap_fix_down(table, i);
+void maxHeap_heapify(int* array, int size) {
+    Heap_max* heap = (Heap_max*) malloc(sizeof(Heap_max));
+    if (heap == NULL) {
+        printf("Failed to allocate space for heap\n");
+        return;
+    }
+    heap ->table.size = size;
+    heap ->table.capacity = size;
+    heap ->table.data = (int*) malloc(sizeof(int) * heap ->table.capacity);
+    if (heap ->table.data == NULL) {
+        printf("Failed to allocate space for items in heap\n");
+        return;
+    }
+    for (int i = 0; i < heap ->table.size; i++) {
+        heap ->table.data[i] = array[i];
+    }
+    for (int i = (heap ->table.size / 2 - 1); i >= 0; i--) {
+        maxHeap_fix_down(heap ->table, i);
     }
     return;
 }
