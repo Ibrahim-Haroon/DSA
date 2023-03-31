@@ -195,24 +195,22 @@ void maxHeap_remove(HEAP_MAX heap, int value) {
     return;
 }
 
-void maxHeap_heapify(int* array, int size) {
-    Heap_max* heap = (Heap_max*) malloc(sizeof(Heap_max));
-    if (heap == NULL) {
-        printf("Failed to allocate space for heap\n");
-        return;
-    }
-    heap ->table.size = size;
-    heap ->table.capacity = size;
-    heap ->table.data = (int*) malloc(sizeof(int) * heap ->table.capacity);
-    if (heap ->table.data == NULL) {
+void maxHeap_heapify(HEAP_MAX heap, int* array, int size) {
+    Heap_max* maxHeap = (Heap_max*)heap;
+    maxHeap ->table.size = size;
+    maxHeap ->table.capacity = size;
+    int* fitted_table = (int*) malloc(sizeof(int) * size);
+    if (fitted_table == NULL) {
         printf("Failed to allocate space for items in heap\n");
         return;
     }
-    for (int i = 0; i < heap ->table.size; i++) {
-        heap ->table.data[i] = array[i];
+    for (int i = 0; i < size; i++) {
+        fitted_table[i] = array[i];
     }
-    for (int i = (heap ->table.size / 2 - 1); i >= 0; i--) {
-        maxHeap_fix_down(heap ->table, i);
+    free(maxHeap ->table.data);
+    maxHeap ->table.data = fitted_table;
+    for (int i = (maxHeap ->table.size / 2 - 1); i >= 0; i--) {
+        maxHeap_fix_down(maxHeap ->table, i);
     }
     return;
 }
