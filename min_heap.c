@@ -212,24 +212,22 @@ void minHeap_fix_down(Dynamic_Array table, int index) {
     minHeap_fix_down(table, smallerNumber_index);
 }
 
-void minHeap_heapify(int* array, int size) {
-    Heap_min* heap = (Heap_min*) malloc(sizeof(Heap_min));
-    if (heap == NULL) {
-        printf("Failed to allocate space for heap\n");
-        return;
-    }
-    heap ->table.size = size;
-    heap ->table.capacity = size;
-    heap ->table.data = (int*) malloc(sizeof(int) * heap ->table.capacity);
-    if (heap ->table.data == NULL) {
+void minHeap_heapify(HEAP_MIN heap, int* array, int size) {
+    Heap_min* minHeap = (Heap_min*)heap;
+    minHeap ->table.size = size;
+    minHeap ->table.capacity = size;
+    int* fitted_table = (int*) malloc(sizeof(int) * size);
+    if (fitted_table == NULL) {
         printf("Failed to allocate space for items in heap\n");
         return;
     }
-    for (int i = 0; i < heap ->table.size; i++) {
-        heap ->table.data[i] = array[i];
+    for (int i = 0; i < size; i++) {
+        fitted_table[i] = array[i];
     }
-    for (int i = (heap ->table.size / 2 - 1); i >= 0; i--) {
-        minHeap_fix_down(heap ->table, i);
+    free(minHeap ->table.data);
+    minHeap ->table.data = fitted_table;
+    for (int i = (minHeap ->table.size / 2 - 1); i >= 0; i--) {
+        minHeap_fix_down(minHeap ->table, i);
     }
     return;
 }
