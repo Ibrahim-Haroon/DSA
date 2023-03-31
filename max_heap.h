@@ -22,7 +22,7 @@ int maxHeap_getMax(HEAP_MAX heap);
 int maxHeap_extractMax(HEAP_MAX heap);
 void maxHeap_remove(HEAP_MAX heap, int value);
 void maxHeap_removeMax(HEAP_MAX heap);
-void maxHeap_heapify(int* array, int size);
+void maxHeap_heapify(HEAP_MAX heap, int* array, int size);
 void maxHeap_print(HEAP_MAX heap);
 void maxHeap_destroy(HEAP_MAX* heap);
 
