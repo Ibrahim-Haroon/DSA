@@ -19,7 +19,7 @@ int* create_unsorted_arr(void) {
     }
     //fill array
     for (int i = 0; i < ARRAY_SIZE; i++) {
-        arr[i] = rand();
+        arr[i] = rand() % 5;
     }
     return arr;
 }
@@ -39,9 +39,13 @@ void bubble_sort(int* arr) {
 //definition: sorting algorithm that finds the smallest item in the unsorted portion of the array and moves it to the sorted portion of the array, it does this size - 1 times. Because at the end, the last item can only be in the correct spot since all other spots are taken.
 void selection_sort(int* arr) {
     for (int i = 0; i < ARRAY_SIZE - 1; i++) {
-        for (int j = 0; j < ARRAY_SIZE - 1; j++) {
-            //TODO
+        int index_of_smallest = i;
+        for (int j = i; j < ARRAY_SIZE; j++) {
+            index_of_smallest = arr[j] < arr[index_of_smallest] ? j : index_of_smallest;
         }
+        int temp = arr[index_of_smallest];
+        arr[index_of_smallest] = arr[i];
+        arr[i] = temp;
     }
     return;
 }
