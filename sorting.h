@@ -18,6 +18,8 @@ typedef enum sorting_technique {
     HEAP,       //O(n*log n)
     QUICK,      //O(n*log n)
     MERGE,      //O(n*log n)
+    COUNT,      //O(n) ***in some cases
+    RADIX       //O(n) ***in some cases
 }Sort_By;
 
 int* create_unsorted_arr(void);
@@ -36,6 +38,10 @@ void heap_sort(int* arr);
 void quick_sort(int* arr);
 //definition:
 void merge_sort(int* arr);
+//definition:
+void count_sort(int* arr);
+//definition:
+void radix_sort(int* arr);
 void sort_print(int *arr);
 void sort_destroy(int* arr);
 
