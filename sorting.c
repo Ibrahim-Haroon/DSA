@@ -98,7 +98,7 @@ double shell_sort(int* arr) {
     )
 }
 
-void heap_sort_fix_down(int* arr, int size, int i) {
+static void heap_sort_fix_down(int* arr, int size, int i) { //private helper function
     int index_left = i * 2 + 1;
     int index_right = i * 2 + 2;
     int index_largest = i;
@@ -144,8 +144,47 @@ double merge_sort(int* arr) {
 }
 
 double count_sort(int* arr) {
-    
-    return 0;
+    TIMED (
+       //first find max
+       int max = arr[0];
+       for (int i = 0; i < ARRAY_SIZE; i++) {
+           max = arr[i] > max ? arr[i] : max;
+       }
+       int* iterative_count = (int*) calloc(sizeof(int), max + 1); //sets all values to 0
+       if (iterative_count == NULL) {
+           printf("Failed to allocate space for iterative count for count sort\n");
+           return 0.0;
+       }
+        //iteration
+       for (int i = 0; i < ARRAY_SIZE; i++) {
+           int index = arr[i];
+           iterative_count[index]++;
+       }
+       int* accumulative_sum = (int*) calloc(sizeof(int), max + 1); //sets all values to 0
+       if (accumulative_sum == NULL) {
+           printf("Failed to allocate space for accumulative sum for count sort\n");
+           return 0.0;
+       }
+       accumulative_sum[0] = iterative_count[0];
+       for (int i = 1; i < max + 1; i++) {
+           accumulative_sum[i] = iterative_count[i] + accumulative_sum[i - 1];
+       }
+       free(iterative_count);   //no longer need
+       int* res = (int*) malloc(sizeof(int) * ARRAY_SIZE);
+       if (res == NULL) {
+           printf("Failed to allocate space for res array for count sort\n");
+       }
+       for (int i = ARRAY_SIZE - 1; i >= 0; i--) {
+           int index = accumulative_sum[arr[i]] - 1;
+           res[index] = arr[i];
+           accumulative_sum[arr[i]]--;
+       }
+       free(accumulative_sum);  //no longer need
+       for (int i = 0; i < ARRAY_SIZE; i++) {
+           arr[i] = res[i];
+       }
+       free(res);              //no longer need
+   )
 }
 
 double radix_sort(int* arr) {
@@ -203,6 +242,20 @@ void sort(int* arr, Sort_By technique, TIME timed) {
                 printf("Merge sort took %.2f seconds\n", time);
             }
             else merge_sort(arr);
+            break;
+        case COUNT:
+            if (timed == withTime) {
+                double time = count_sort(arr);
+                printf("Count sort took %.2f seconds\n", time);
+            }
+            else count_sort(arr);
+            break;
+        case RADIX:
+            if (timed == withTime) {
+                double time = count_sort(arr);
+                printf("Count sort took %.2f seconds\n", time);
+            }
+            else radix_sort(arr);
             break;
         default:
             printf("Invalid sorting algorithm\n");
