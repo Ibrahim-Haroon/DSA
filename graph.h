@@ -15,8 +15,8 @@ typedef void* GRAPH;
 
 GRAPH graph_init(void);
 bool graph_isEmpty(GRAPH graph);
-void graph_addVertex(GRAPH graph, int item, int weight); //set all to 1 if unweighted graph
-void graph_addConnection(GRAPH graph, int from, int to);
+void graph_addVertex(GRAPH graph, int item); //set all to 1 if unweighted graph
+void graph_addConnection(GRAPH graph, int from, int to, int weight);
 bool graph_containsVertex(GRAPH graph, int item);
 bool graph_isConnected(GRAPH graph, int from, int to);
 void graph_removeConnection(GRAPH graph, int from, int to);
