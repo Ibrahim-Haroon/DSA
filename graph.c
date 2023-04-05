@@ -13,20 +13,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct vertex Vertex;
-typedef struct edge Edge;
-
-struct vertex {
+typedef struct vertex {
     int item;
-    Edge* edge;
-};
-
-struct edge {
     int weight;
-    int from;
-    int to;
-    Vertex* next;
-};
+    struct vertex* edge;
+    
+}Vertex;
 
 typedef struct digraph{
     int size;
@@ -35,7 +27,7 @@ typedef struct digraph{
 }Graph;
 static bool graph_isFull(GRAPH graph);                 //private
 static void increase_adjagencyList_size(GRAPH graph); //private
-static Vertex* createVertex(int item);               //private
+static Vertex* createVertex(int item, int weight);               //private
 
 
 GRAPH graph_init(void) {
@@ -70,14 +62,14 @@ void increase_adjagencyList_size(GRAPH graph) {     //update
     Vertex** larger_adjagencyList = (Vertex**) calloc(sizeof(Vertex*), (weighted_graph ->capacity * LOAD_FACTOR));
     for (int i = 0; i < weighted_graph ->size; i++) {
         larger_adjagencyList[i] = weighted_graph ->adjagency_list[i];
-        Vertex* toInsert = createVertex(weighted_graph ->adjagency_list[i]->item);
+        Vertex* toInsert = createVertex(weighted_graph ->adjagency_list[i]->item, weighted_graph ->adjagency_list[i]->weight);
         larger_adjagencyList[i] = toInsert;
-        Vertex* temp = weighted_graph ->adjagency_list[i]->edge->next;
+        Vertex* temp = weighted_graph ->adjagency_list[i]->edge;
         while (temp != NULL) {
-            toInsert = createVertex(temp ->item);
-            toInsert ->edge->next = larger_adjagencyList[i] ->edge->next;
-            larger_adjagencyList[i] ->edge->next = toInsert;
-            temp = temp ->edge->next;
+            toInsert = createVertex(temp ->item, temp ->weight);
+            toInsert ->edge = larger_adjagencyList[i] ->edge;
+            larger_adjagencyList[i] ->edge = toInsert;
+            temp = temp ->edge;
         }
     }
     free(weighted_graph ->adjagency_list);
@@ -93,31 +85,27 @@ bool graph_isEmpty(GRAPH graph) {
     return false;
 }
 
-static Vertex* createVertex(int item) {
+static Vertex* createVertex(int item, int weight) {
     Vertex* newVertex = (Vertex*) malloc(sizeof(Vertex));
     if (newVertex == NULL) {
         fprintf(stderr, "Failed to allocate space for a new vector\n");
         exit(EXIT_FAILURE);
     }
     newVertex ->item = item;
-    newVertex ->edge = (Edge*) malloc(sizeof(Edge));
-    if (newVertex ->edge == NULL) {
-        fprintf(stderr, "Failed to allocate space for new vector's edge\n");
-        exit(EXIT_FAILURE);
-    }
-    newVertex ->edge->next = NULL;
+    newVertex ->weight = weight;
+    newVertex ->edge = NULL;
     return newVertex;
 }
 
 void graph_addVertex(GRAPH graph, int item) {
     if (graph_isFull(graph)) increase_adjagencyList_size(graph);
     Graph* weighted_graph = (Graph*)graph;
-    Vertex* toInsert = createVertex(item);
+    Vertex* toInsert = createVertex(item, 0); //weight currently does not matter
     weighted_graph ->adjagency_list[weighted_graph ->size++] = toInsert;
     return;
 }
 
-void graph_addConnection(GRAPH graph, int from, int to, int weight) { //update
+void graph_addConnection(GRAPH graph, int from, int to, int weight) {
     Graph* weighted_graph = (Graph*)graph;
     if (graph_containsVertex(graph, from) &&
         graph_containsVertex(graph, to) &&
@@ -125,13 +113,9 @@ void graph_addConnection(GRAPH graph, int from, int to, int weight) { //update
     {
         for (int i = 0; i < weighted_graph ->size; i++) {
             if (weighted_graph ->adjagency_list[i]->item == from) {
-                Vertex* toInsert = createVertex(to);
-                toInsert ->edge->next = weighted_graph ->adjagency_list[i] ->edge->next;
-                weighted_graph ->adjagency_list[i] ->edge->next = toInsert;
-                //add weight
-                weighted_graph ->adjagency_list[i]->edge->from = from;
-                weighted_graph ->adjagency_list[i]->edge->to = to;
-                weighted_graph ->adjagency_list[i]->edge->weight = weight;
+                Vertex* toInsert = createVertex(to, weight);
+                toInsert ->edge = weighted_graph ->adjagency_list[i] ->edge;
+                weighted_graph ->adjagency_list[i] ->edge = toInsert;
                 return;
             }
         }
@@ -163,7 +147,7 @@ bool graph_isConnected(GRAPH graph, int from, int to) {
                 if (temp ->item == to) {
                     return true;
                 }
-                temp = temp ->edge->next;
+                temp = temp ->edge;
             }
         }
     }
@@ -183,13 +167,13 @@ void graph_removeConnection(GRAPH graph, int from, int to) {
             Vertex* slow = fast;
             while (fast != NULL && fast ->item != to) {
                 slow = fast;
-                fast = fast ->edge->next;
+                fast = fast ->edge;
             }
             if (fast == NULL) {
                 printf("Invalid, connection from %d to %d never existed\n", from, to);
                 return;
             }
-            slow ->edge->next = fast ->edge->next;
+            slow ->edge = fast ->edge;
             free(fast);
             fast = NULL;
         }
@@ -208,7 +192,7 @@ void graph_removeVertex(GRAPH graph, int item) {
         if (weighted_graph ->adjagency_list[i]->item == item) {
             while (weighted_graph ->adjagency_list[i] != NULL) {
                 Vertex* temp = weighted_graph ->adjagency_list[i];
-                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i] ->edge->next;
+                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i] ->edge;
                 free(temp);
             }
         }
@@ -231,7 +215,7 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
             Vertex* temp = weighted_graph ->adjagency_list[i];
             while (temp != NULL) {
                 list_add(adjacent_vertices, temp ->item);
-                temp = temp ->edge->next;
+                temp = temp ->edge;
             }
             return adjacent_vertices;
         }
@@ -247,6 +231,24 @@ void graph_dfs(GRAPH graph) {
     }
     //Graph* weighted_graph = (Graph*)graph;
     return;
+}
+
+int graph_getWeight(GRAPH graph, int from, int to) {
+    if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
+        printf("Invalid! Either one of the vertices do not exist\n");
+        return 0xC0FFEE;
+    }
+    Graph* weighted_graph = (Graph*)graph;
+    for (int i = 0; i < weighted_graph ->size; i++) {
+        if (weighted_graph ->adjagency_list[i]->item == from) {
+            Vertex* temp = weighted_graph ->adjagency_list[i];
+            while (temp ->item != to) {
+                temp = temp ->edge;
+            }
+            return temp ->weight;
+        }
+    }
+    return 0xC0FFEE;
 }
 
 void graph_bfs(GRAPH graph) {
@@ -286,7 +288,7 @@ void graph_destroy(GRAPH* graph) {
         for (int i = 0; i < weighted_graph ->size; i++) {
             while (weighted_graph ->adjagency_list[i] != NULL) {
                 Vertex* temp = weighted_graph ->adjagency_list[i];
-                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i]->edge->next;
+                weighted_graph ->adjagency_list[i] = weighted_graph ->adjagency_list[i]->edge;
                 free(temp);
             }
         }
