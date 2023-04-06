@@ -17,25 +17,25 @@ clock_t _end_time = clock(); \
 return (_end_time - _start_time) / (double)CLOCKS_PER_SEC; \
 
 
-int* create_unsorted_arr(void) {
+int* create_unsorted_arr(int size) {
     //init array
-    int* arr = (int*) malloc(sizeof(int) * ARRAY_SIZE);
+    int* arr = (int*) malloc(sizeof(int) * size);
     //check
     if (arr == NULL) {
         printf("Failed to allocate space for array on the heap\n");
         exit(EXIT_FAILURE);
     }
     //fill array
-    for (int i = 0; i < ARRAY_SIZE; i++) {
+    for (int i = 0; i < size; i++) {
         arr[i] = rand() % 20;
     }
     return arr;
 }
 
-double bubble_sort(int* arr) {
+double bubble_sort(int* arr, int size) {
     TIMED (
-        for (int i = 0; i < ARRAY_SIZE - 1; i++) {
-            for (int j = 0; j < ARRAY_SIZE - i - 1; j++) {
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j < size - i - 1; j++) {
                 if (arr[j] > arr[j + 1]) {
                     int temp = arr[j];
                     arr[j] = arr[j + 1];
@@ -46,11 +46,11 @@ double bubble_sort(int* arr) {
     )
 }
 
-double selection_sort(int* arr) {
+double selection_sort(int* arr, int size) {
     TIMED (
-        for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+        for (int i = 0; i < size - 1; i++) {
             int index_of_smallest = i;
-            for (int j = i; j < ARRAY_SIZE; j++) {
+            for (int j = i; j < size; j++) {
                 index_of_smallest = arr[j] < arr[index_of_smallest] ? j : index_of_smallest;
             }
             int temp = arr[index_of_smallest];
@@ -60,9 +60,9 @@ double selection_sort(int* arr) {
     )
 }
 
-double insertion_sort(int* arr) {
+double insertion_sort(int* arr, int size) {
     TIMED (
-        for (int i = 1; i < ARRAY_SIZE; i++) {
+        for (int i = 1; i < size; i++) {
             int j = i;
             int temp = arr[j];
             while (j > 0 && temp < arr[j - 1]) {
@@ -74,17 +74,17 @@ double insertion_sort(int* arr) {
     )
 }
 
-double shell_sort(int* arr) {
+double shell_sort(int* arr, int size) {
     TIMED (
         //Knuth sequence
         int h = 2;
-        while (h < ARRAY_SIZE / 3) {
+        while (h < size / 3) {
             h *= 2;
         }
         h--;
         //^memorize
         while (h != 0) {
-            for (int i = h; i < ARRAY_SIZE; i++) {
+            for (int i = h; i < size; i++) {
                 int j = i;
                 int temp = arr[j];
                 while (j >= h && temp < arr[j - 1]) {
@@ -118,36 +118,75 @@ static void heap_sort_fix_down(int* arr, int size, int i) { //private helper fun
     heap_sort_fix_down(arr, size, index_largest);
 }
 
-double heap_sort(int* arr) {
+double heap_sort(int* arr, int size) {
     TIMED (
-        for (int i = (ARRAY_SIZE / 2 - 1); i >= 0; i--) {
-            heap_sort_fix_down(arr, ARRAY_SIZE, i);
+        for (int i = (size / 2 - 1); i >= 0; i--) {
+            heap_sort_fix_down(arr, size, i);
         }
 
-        for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+        for (int i = 0; i < size - 1; i++) {
            int temp = arr[0];
-           arr[0] = arr[ARRAY_SIZE - i - 1];
-           arr[ARRAY_SIZE - i - 1] = temp;
-           heap_sort_fix_down(arr, ARRAY_SIZE - i - 1, 0);
+           arr[0] = arr[size - i - 1];
+           arr[size - i - 1] = temp;
+           heap_sort_fix_down(arr, size - i - 1, 0);
         }
     )
 }
 
-double quick_sort(int* arr) {
+void quick_sort(int* arr, int size) {
+    if (size <= 7) {
+        insertion_sort(arr, size);
+        return;
+    }
+    int rand_pivot_index = rand() % size;
+
+    int left = 0, right = size - 1;
+    while (left < right) {
+        if (arr[right] >= arr[rand_pivot_index]) {
+            right--;
+        }
+        else if (arr[left] <= arr[rand_pivot_index]) {
+            left++;
+        }
+        else {
+            int temp = arr[left];
+            arr[left] = arr[right];
+            arr[right] = temp;
+        }
+    }
+    //exists loop when left == right so pivot must be swapped with left or right
+    int temp = arr[rand_pivot_index];
+    arr[rand_pivot_index] = arr[left];
+    arr[left] = temp;
+
+    quick_sort(arr, left); //sort left subarray
+    quick_sort(arr + left + 1, size - left - 1); //sort right subarray
+    
+    //should never reach here
+    return;
+}
+
+double qsort_w_time(int* arr, int size) {
+    TIMED (
+           if (size <= 7) {
+               insertion_sort(arr, size);
+           }
+           else {
+               quick_sort(arr, size);
+           }
+       )
+}
+
+double merge_sort(int* arr, int size) {
     
     return 0;
 }
 
-double merge_sort(int* arr) {
-    
-    return 0;
-}
-
-double count_sort(int* arr) {
+double count_sort(int* arr, int size) {
     TIMED (
        //first find max
        int max = arr[0];
-       for (int i = 0; i < ARRAY_SIZE; i++) {
+       for (int i = 0; i < size; i++) {
            max = arr[i] > max ? arr[i] : max;
        }
        int* iterative_count = (int*) calloc(sizeof(int), max + 1); //sets all values to 0
@@ -156,7 +195,7 @@ double count_sort(int* arr) {
            return 0.0;
        }
         //iteration
-       for (int i = 0; i < ARRAY_SIZE; i++) {
+       for (int i = 0; i < size; i++) {
            int index = arr[i];
            iterative_count[index]++;
        }
@@ -170,92 +209,93 @@ double count_sort(int* arr) {
            accumulative_sum[i] = iterative_count[i] + accumulative_sum[i - 1];
        }
        free(iterative_count);   //no longer need
-       int* res = (int*) malloc(sizeof(int) * ARRAY_SIZE);
+       int* res = (int*) malloc(sizeof(int) * size);
        if (res == NULL) {
            printf("Failed to allocate space for res array for count sort\n");
        }
-       for (int i = ARRAY_SIZE - 1; i >= 0; i--) {
+       for (int i = size - 1; i >= 0; i--) {
            int index = accumulative_sum[arr[i]] - 1;
            res[index] = arr[i];
            accumulative_sum[arr[i]]--;
        }
        free(accumulative_sum);  //no longer need
-       for (int i = 0; i < ARRAY_SIZE; i++) {
+       //copy res to orginal array
+       for (int i = 0; i < size; i++) {
            arr[i] = res[i];
        }
        free(res);              //no longer need
    )
 }
 
-double radix_sort(int* arr) {
+double radix_sort(int* arr, int size) {
     
-    return 0;
+    return 0.0;
 }
 
-void sort(int* arr, Sort_By technique, TIME timed) {
+void sort(int* arr, int size, Sort_By technique, TIME timed) {
     switch (technique) {
         case BUBBLE:
             if (timed == withTime) {
-                double time = bubble_sort(arr);
+                double time = bubble_sort(arr, size);
                 printf("Bubble sort took %.2f seconds\n", time);
             }
-            else bubble_sort(arr);
+            else bubble_sort(arr, size);
             break;
         case SELECTION:
             if (timed == withTime) {
-                double time = selection_sort(arr);
+                double time = selection_sort(arr, size);
                 printf("Selection sort took %.2f seconds\n", time);
             }
-            else selection_sort(arr);
+            else selection_sort(arr, size);
             break;
         case INSERTION:
             if (timed == withTime) {
-                double time = insertion_sort(arr);
+                double time = insertion_sort(arr, size);
                 printf("Insertion sort took %.2f seconds\n", time);
             }
-            else insertion_sort(arr);
+            else insertion_sort(arr, size);
             break;
         case SHELL:
             if (timed == withTime) {
-                double time = shell_sort(arr);
+                double time = shell_sort(arr, size);
                 printf("Shell sort took %.2f seconds\n", time);
             }
-            else shell_sort(arr);
+            else shell_sort(arr, size);
             break;
         case HEAP:
             if (timed == withTime) {
-                double time = heap_sort(arr);
+                double time = heap_sort(arr, size);
                 printf("Heap sort took %.2f seconds\n", time);
             }
-            else heap_sort(arr);
+            else heap_sort(arr, size);
             break;
         case QUICK:
             if (timed == withTime) {
-                double time = quick_sort(arr);
+                double time = qsort_w_time(arr, size);
                 printf("Quick sort took %.2f seconds\n", time);
             }
-            else quick_sort(arr);
+            else quick_sort(arr, size);
             break;
         case MERGE:
             if (timed == withTime) {
-                double time = merge_sort(arr);
+                double time = merge_sort(arr, size);
                 printf("Merge sort took %.2f seconds\n", time);
             }
-            else merge_sort(arr);
+            else merge_sort(arr, size);
             break;
         case COUNT:
             if (timed == withTime) {
-                double time = count_sort(arr);
+                double time = count_sort(arr, size);
                 printf("Count sort took %.2f seconds\n", time);
             }
-            else count_sort(arr);
+            else count_sort(arr, size);
             break;
         case RADIX:
             if (timed == withTime) {
-                double time = count_sort(arr);
+                double time = count_sort(arr, size);
                 printf("Count sort took %.2f seconds\n", time);
             }
-            else radix_sort(arr);
+            else radix_sort(arr, size);
             break;
         default:
             printf("Invalid sorting algorithm\n");
@@ -264,10 +304,10 @@ void sort(int* arr, Sort_By technique, TIME timed) {
 }
 
 
-void sort_print(int *arr) {
+void sort_print(int *arr, int size) {
     printf("[");
-    for (int i = 0; i < ARRAY_SIZE; i++) {
-        if (i == ARRAY_SIZE - 1) {
+    for (int i = 0; i < size; i++) {
+        if (i == size - 1) {
             printf("%d]\n", arr[i]);
         }
         else printf("%d, ", arr[i]);
