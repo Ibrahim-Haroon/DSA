@@ -138,14 +138,32 @@ void quick_sort(int* arr, int size) {
         insertion_sort(arr, size);
         return;
     }
-    int rand_pivot_index = rand() % size;
+    int left_index = 0;
+    int middle_index = size / 2;
+    int right_index = size - 1;
+    
+    if (arr[middle_index] < arr[left_index]) {
+        int temp = arr[left_index];
+        arr[left_index] = arr[middle_index];
+        arr[middle_index] = temp;
+    }
+    if (arr[right_index] < arr[middle_index]) {
+        int temp = arr[right_index];
+        arr[right_index] = arr[middle_index];
+        arr[middle_index] = temp;
+    }
+    if (arr[middle_index] < arr[left_index]) {
+        int temp = arr[middle_index];
+        arr[middle_index] = arr[left_index];
+        arr[left_index] = temp;
+    }
 
-    int left = 0, right = size - 1;
+    int left = 1, right = size - 1, pivot_index = 1;
     while (left < right) {
-        if (arr[right] >= arr[rand_pivot_index]) {
+        if (arr[right] >= arr[1]) {
             right--;
         }
-        else if (arr[left] <= arr[rand_pivot_index]) {
+        else if (arr[left] <= arr[1]) {
             left++;
         }
         else {
@@ -155,12 +173,13 @@ void quick_sort(int* arr, int size) {
         }
     }
     //exists loop when left == right so pivot must be swapped with left or right
-    int temp = arr[rand_pivot_index];
-    arr[rand_pivot_index] = arr[left];
-    arr[left] = temp;
+    pivot_index = left;
+    int temp = arr[pivot_index];
+    arr[pivot_index] = arr[1];
+    arr[1] = temp;
 
-    quick_sort(arr, left); //sort left subarray
-    quick_sort(arr + left + 1, size - left - 1); //sort right subarray
+    quick_sort(arr, pivot_index); //sort left subarray
+    quick_sort(arr + pivot_index + 1, size - pivot_index - 1); //sort right subarray
     
     //should never reach here
     return;
