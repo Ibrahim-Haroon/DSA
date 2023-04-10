@@ -113,6 +113,15 @@ void queue_print(QUEUE queue) {
     return;
 }
 
+int queue_front(QUEUE queue) {
+    if (queue_isEmpty(queue)) {
+        printf("Invalid!, queue is empty\n");
+        return 0xC0FFEE;
+    }
+    Queue* current_queue = (Queue*)queue;
+    return current_queue ->head->value;
+}
+
 void queue_destroy(QUEUE* queue) {
     if (queue_isEmpty(*queue)) {
         free(*queue);
