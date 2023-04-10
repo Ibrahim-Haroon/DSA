@@ -17,6 +17,7 @@ bool queue_isEmpty(QUEUE queue);
 void enqueue(QUEUE queue, int num);
 void dequeue(QUEUE queue);
 void queue_print(QUEUE queue);
+int queue_front(QUEUE queue);
 void queue_destroy(QUEUE* queue);
 
 #endif /* queue_h */
