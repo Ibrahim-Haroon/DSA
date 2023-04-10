@@ -289,7 +289,7 @@ void bst_destroy(BST* tree) {
         *tree = NULL;
         return;
     }
-    Binary_tree* curr_tree = (Binary_tree*)tree;
+    Binary_tree* curr_tree = (Binary_tree*)*tree;
     destroy_recursive(curr_tree ->root);
     *tree = NULL;
     return;

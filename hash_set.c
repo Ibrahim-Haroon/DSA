@@ -195,7 +195,7 @@ void hashSet_destroy(HashSet* hashset) {
         *hashset = NULL;
         return;
     }
-    Set** set = (Set**)hashset;
+    Set** set = (Set**)*hashset;
     for (int i = 0; i < (*set) ->capacity; i++) {
         while ((*set) ->table[i] != NULL) {
             Node_Set* temp = (*set) ->table[i];

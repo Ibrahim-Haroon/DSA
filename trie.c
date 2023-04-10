@@ -149,7 +149,7 @@ void trie_destroyTrie(TRIE* trie) {
         *trie = NULL;
         return;
     }
-    Trie** curr_trie = (Trie**)trie;
+    Trie** curr_trie = (Trie**)*trie;
     destroy_trie_recursive((*curr_trie) ->root);
     
     free(*trie);

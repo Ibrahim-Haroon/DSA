@@ -128,7 +128,7 @@ void queue_destroy(QUEUE* queue) {
         *queue = NULL;
         return;
     }
-    Queue* current_queue = (Queue*)queue;
+    Queue* current_queue = (Queue*)*queue;
     while (current_queue ->head != NULL) {
         Node_q* temp = current_queue ->head;
         current_queue ->head = current_queue ->head->next;

@@ -102,7 +102,7 @@ void stack_print(STACK stack) {
 }
 
 void stack_destroy(STACK* stack) {
-    Stack* curr_stack = (Stack*)stack;
+    Stack* curr_stack = (Stack*)*stack;
     if (stack_isEmpty(*stack)) {
         free(*stack);
         *stack = NULL;

@@ -11,11 +11,15 @@
 
 #include "graph.h"
 #include <stdlib.h>
+#include <string.h> //needed for memset
 #include <stdio.h>
+
+#define INFINITY (0x7fffffff)
 
 typedef struct vertex {
     int item;
     int weight;
+    int adjagencyListSize; //Augmentation
     struct vertex* edge;
     
 }Vertex;
@@ -25,6 +29,7 @@ typedef struct digraph{
     int capacity;
     Vertex** adjagency_list; //** because adjagency_list has to grow vertically and horizontally
 }Graph;
+
 static bool graph_isFull(GRAPH graph);                 //private
 static void increase_adjagencyList_size(GRAPH graph); //private
 static Vertex* createVertex(int item, int weight);               //private
@@ -93,6 +98,7 @@ static Vertex* createVertex(int item, int weight) {
     }
     newVertex ->item = item;
     newVertex ->weight = weight;
+    newVertex ->adjagencyListSize = 0;
     newVertex ->edge = NULL;
     return newVertex;
 }
@@ -116,6 +122,7 @@ void graph_addConnection(GRAPH graph, int from, int to, int weight) {
                 Vertex* toInsert = createVertex(to, weight);
                 toInsert ->edge = weighted_graph ->adjagency_list[i] ->edge;
                 weighted_graph ->adjagency_list[i] ->edge = toInsert;
+                weighted_graph ->adjagency_list[i]->adjagencyListSize++;
                 return;
             }
         }
@@ -163,6 +170,7 @@ void graph_removeConnection(GRAPH graph, int from, int to) {
     for (int i = 0; i < weighted_graph ->size; i++) {
         if (weighted_graph ->adjagency_list[i] == NULL) continue;
         if (weighted_graph ->adjagency_list[i]->item == from) {
+            weighted_graph ->adjagency_list[i]->adjagencyListSize--;
             Vertex* fast = weighted_graph ->adjagency_list[i];
             Vertex* slow = fast;
             while (fast != NULL && fast ->item != to) {
@@ -224,15 +232,6 @@ LIST graph_getAdjacentVerticies(GRAPH graph, int from) {
     return adjacent_vertices;
 }
 
-void graph_dfs(GRAPH graph) {
-    if (graph_isEmpty(graph)) {
-        printf("EMPTY graph\n");
-        return;
-    }
-    //Graph* weighted_graph = (Graph*)graph;
-    return;
-}
-
 int graph_getWeight(GRAPH graph, int from, int to) {
     if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
         printf("Invalid! Either one of the vertices do not exist\n");
@@ -242,13 +241,26 @@ int graph_getWeight(GRAPH graph, int from, int to) {
     for (int i = 0; i < weighted_graph ->size; i++) {
         if (weighted_graph ->adjagency_list[i]->item == from) {
             Vertex* temp = weighted_graph ->adjagency_list[i];
-            while (temp ->item != to) {
+            while (temp != NULL && temp ->item != to) {
                 temp = temp ->edge;
+            }
+            if (temp == NULL) {
+                printf("%d is not in the graph", to);
+                return 0xC0FFEE;
             }
             return temp ->weight;
         }
     }
     return 0xC0FFEE;
+}
+
+void graph_dfs(GRAPH graph) {
+    if (graph_isEmpty(graph)) {
+        printf("EMPTY graph\n");
+        return;
+    }
+    //Graph* weighted_graph = (Graph*)graph;
+    return;
 }
 
 void graph_bfs(GRAPH graph) {
@@ -260,19 +272,74 @@ void graph_bfs(GRAPH graph) {
     return;
 }
 
+int minDistance(int distance[], bool sptSet[], int V) {
+    int min = INFINITY, min_index = 0;
+    
+    for (int vertex = 0; vertex < V; vertex++) {
+        if (sptSet[vertex] == false && distance[vertex] <= min) {
+            sptSet[vertex] = true;
+            min = distance[vertex];
+            min_index = vertex;
+        }
+    }
+    
+    return min_index;
+}
+
 int graph_shortestPath(GRAPH graph, int from, int to) {
     if (graph_isEmpty(graph)) {
         printf("EMPTY graph\n");
         return -1;
     }
-    if (!graph_isConnected(graph, from, to)) {
+    if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
         printf("No path exists from %d to %d\n", from, to);
         return -1;
     }
-    //Graph* weighted_graph = (Graph*)graph;
+    Graph* weighted_graph = (Graph*)graph;
+    //sptSet = shortest path tree Set
+    bool* sptSet = (bool*) calloc(sizeof(bool), weighted_graph ->size); //sets everything to false
+    if (sptSet == NULL) {
+        printf("HEAP is full\n Could not allocate space for sptSet\n");
+        return INFINITY;
+    }
+    int* distance = (int*) malloc(sizeof(int) * weighted_graph ->size);
+    if (distance == NULL) {
+        printf("HEAP is full\n Could not allocate space for distances list\n");
+        return INFINITY;
+    }
+    //set all distances from src to destination to INFINITY
+    for (int i = 0; i < weighted_graph->size; i++) {
+        distance[i] = INFINITY;
+    }
     
-    return 1;
+    distance[from] = 0;
+    for (int i = 0; i < weighted_graph->size - 1; i++) {
+        int min_distance = INFINITY;
+        int min_index = -1;
+        for (int j = 0; j < weighted_graph->size; j++) {
+            if (!sptSet[j] && distance[j] <= min_distance) {
+                min_distance = distance[j];
+                min_index = j;
+            }
+        }
+        min_index--;
+        sptSet[min_index] = true;
+        Vertex* current_vertex = weighted_graph->adjagency_list[min_index];
+        while (current_vertex != NULL) {
+            int neighbor_index = current_vertex->item;
+            int weight = current_vertex ->weight;
+            printf("---\t%d---",weight);
+            if (!sptSet[neighbor_index] && distance[min_index] != INFINITY &&
+                distance[min_index] + weight < distance[neighbor_index]) {
+                distance[neighbor_index] = distance[min_index] + weight;
+            }
+            current_vertex = current_vertex->edge;
+        }
+    }
+    int dist = distance[to] > 0? distance[to] : -1;
+    return dist;
 }
+
 
 LIST topological_sort(GRAPH graph) {
     if (graph_isEmpty(graph)) {
@@ -297,3 +364,110 @@ void graph_destroy(GRAPH* graph) {
     *graph = NULL;
     return;
 }
+
+
+/*
+ int graph_shortestPath(GRAPH graph, int from, int to) { //update
+ if (graph_isEmpty(graph)) {
+ printf("EMPTY graph\n");
+ return -1;
+ }
+ if (!graph_isConnected(graph, from, to)) {
+ printf("No path exists from %d to %d\n", from, to);
+ return -1;
+ }
+ Graph* weighted_graph = (Graph*)graph;
+ int numOfConnectedVertices = 0;
+ for (int i = 0; i < weighted_graph ->size; i++) {
+ if (weighted_graph ->adjagency_list[i]->item == from) {
+ numOfConnectedVertices = weighted_graph ->adjagency_list[i]->adjagencyListSize;
+ }
+ }
+ //sptSet = shortest path tree Set
+ bool* sptSet = (bool*) calloc(sizeof(bool), numOfConnectedVertices + 1); //sets everything to false
+ if (sptSet == NULL) {
+ printf("HEAP is full\n Could not allocate space for sptSet\n");
+ return INFINITY;
+ }
+ int* distance = (int*) malloc(sizeof(int) * numOfConnectedVertices + 1);
+ if (distance == NULL) {
+ printf("HEAP is full\n Could not allocate space for distances list\n");
+ return INFINITY;
+ }
+ memset(distance, INFINITY, sizeof(int) * numOfConnectedVertices + 1);  //set all distances to infinity
+ distance[from] = 0; //distance from itself is always 0
+ 
+ for (int i = 0; i < numOfConnectedVertices; i++) {
+ int u = minDistance(distance, sptSet, numOfConnectedVertices + 1);
+ sptSet[u] = true;
+ 
+ for (int v = 0; v < numOfConnectedVertices + 1; v++) {
+ if (!sptSet[v] &&
+ graph_isConnected(graph, u, v) &&
+ graph_getWeight(graph, u, v) < distance[v])
+ {
+ distance[v] = graph_getWeight(graph, u, v);
+ }
+ }
+ }
+ int shortestPath = distance[to];
+ free(sptSet);
+ free(distance);
+ return shortestPath;
+ }
+ */
+
+
+
+//int graph_shortestPath(GRAPH graph, int from, int to) { //update
+//    if (graph_isEmpty(graph)) {
+//        printf("EMPTY graph\n");
+//        return -1;
+//    }
+//    if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
+//        printf("No path exists from %d to %d\n", from, to);
+//        return -1;
+//    }
+//    Graph* weighted_graph = (Graph*)graph;
+//    //sptSet = shortest path tree Set
+//    bool* sptSet = (bool*) calloc(sizeof(bool), weighted_graph ->size); //sets everything to false
+//    if (sptSet == NULL) {
+//        printf("HEAP is full\n Could not allocate space for sptSet\n");
+//        return INFINITY;
+//    }
+//    int* distance = (int*) malloc(sizeof(int) * weighted_graph ->size);
+//    if (distance == NULL) {
+//        printf("HEAP is full\n Could not allocate space for distances list\n");
+//        return INFINITY;
+//    }
+//    memset(distance, INFINITY, sizeof(int) * weighted_graph ->size);  //set all distances to infinity
+//
+//    distance[from] = 0; //distance from itself is always 0
+//
+//    for (int i = 0; i < weighted_graph ->size - 1; i++) {
+//        int u = minDistance(distance, sptSet, weighted_graph ->size);
+//        sptSet[u] = true;
+//
+//        if (u == to) {
+//            return distance[to];
+//        }
+//
+//        Vertex* temp = weighted_graph ->adjagency_list[u];
+//        while (temp != NULL) {
+//
+//        }
+//
+//        for (int v = 0; v < weighted_graph ->size; v++) {
+//            if (sptSet[v] == false &&
+//                graph_isConnected(graph, u, v) &&
+//                graph_getWeight(graph, u, v) < distance[v])
+//            {
+//                distance[v] = graph_getWeight(graph, u, v);
+//            }
+//        }
+//    }
+//    int shortestPath = distance[to];
+//    free(sptSet);
+//    free(distance);
+//    return shortestPath;
+//}

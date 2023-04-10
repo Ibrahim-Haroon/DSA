@@ -197,7 +197,7 @@ void hashMap_destroy(HashMap* hashmap) {
         *hashmap = NULL;
         return;
     }
-    Map** map = (Map**)hashmap;
+    Map** map = (Map**)*hashmap;
     for (int i = 0; i < (*map) ->capacity; i++) {
         while ((*map) ->table[i] != NULL) {
             Node_m* temp = (*map) ->table[i];
