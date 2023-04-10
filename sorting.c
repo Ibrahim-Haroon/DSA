@@ -27,7 +27,7 @@ int* create_unsorted_arr(int size) {
     }
     //fill array
     for (int i = 0; i < size; i++) {
-        arr[i] = rand() % 20;
+        arr[i] = rand();
     }
     return arr;
 }
@@ -99,23 +99,27 @@ double shell_sort(int* arr, int size) {
 }
 
 static void heap_sort_fix_down(int* arr, int size, int i) { //private helper function
-    int index_left = i * 2 + 1;
-    int index_right = i * 2 + 2;
     int index_largest = i;
-    
-    if (index_left < size) {
-        index_largest = arr[index_left] > arr[index_largest] ? index_left : index_largest;
+    while (1) {
+        int index_left = i * 2 + 1;
+        int index_right = i * 2 + 2;
+        if (index_left < size) {
+            index_largest = arr[index_left] > arr[index_largest] ? index_left : index_largest;
+        }
+        if (index_right < size) {
+            index_largest = arr[index_right] > arr[index_largest] ? index_right : index_largest;
+        }
+        if (index_largest == i) {
+            return;
+        }
+        
+        int temp = arr[i];
+        arr[i] = arr[index_largest];
+        arr[index_largest] = temp;
+        
+        i = index_largest;
     }
-    if (index_right < size) {
-        index_largest = arr[index_right] > arr[index_largest] ? index_right : index_largest;
-    }
-    if (index_largest == i) {
-        return;
-    }
-    int temp = arr[i];
-    arr[i] = arr[index_largest];
-    arr[index_largest] = temp;
-    heap_sort_fix_down(arr, size, index_largest);
+    return;
 }
 
 double heap_sort(int* arr, int size) {
@@ -157,13 +161,19 @@ void quick_sort(int* arr, int size) {
         arr[middle_index] = arr[left_index];
         arr[left_index] = temp;
     }
+    
+    int pivot_index = 1;
+    
+    int temp =  arr[middle_index];
+    arr[middle_index] = arr[pivot_index];
+    arr[pivot_index] = temp;
 
-    int left = 1, right = size - 1, pivot_index = 1;
+    int left = 1, right = size - 2;
     while (left < right) {
-        if (arr[right] >= arr[1]) {
+        if (arr[right] >= arr[pivot_index]) {
             right--;
         }
-        else if (arr[left] <= arr[1]) {
+        else if (arr[left] <= arr[pivot_index]) {
             left++;
         }
         else {
@@ -172,14 +182,13 @@ void quick_sort(int* arr, int size) {
             arr[right] = temp;
         }
     }
-    //exists loop when left == right so pivot must be swapped with left or right
-    pivot_index = left;
-    int temp = arr[pivot_index];
-    arr[pivot_index] = arr[1];
-    arr[1] = temp;
+    //exists loop when left == right so pivot must be swapped with either left or right
+    temp = arr[pivot_index];
+    arr[pivot_index] = arr[left];
+    arr[left] = temp;
 
-    quick_sort(arr, pivot_index); //sort left subarray
-    quick_sort(arr + pivot_index + 1, size - pivot_index - 1); //sort right subarray
+    quick_sort(arr, left); //sort left subarray
+    quick_sort(arr + left + 1, size - left - 1); //sort right subarray
     
     //should never reach here
     return;
