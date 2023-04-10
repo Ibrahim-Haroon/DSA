@@ -16,8 +16,8 @@ typedef enum sorting_technique {
     HEAP,       //O(n*log n)
     QUICK,      //O(n*log n)
     MERGE,      //O(n*log n)
-    COUNT,      //O(n) ***in some cases
-    RADIX       //O(n) ***in some cases
+    COUNT,      //O(n + k) ***O(n) in some cases
+    RADIX       //O(n + k) ***O(n) in some cases
 }Sort_By;
 
 typedef enum time{
