@@ -5,43 +5,38 @@
 //  Created by Ibrahim Haroon on 3/14/23.
 //
 
-#include "sorting.h"
+#include "graph.h"
 #include <stdio.h>
 
-#define SIZE (10000000)
-
 int main(void) {
-    int* test = create_unsorted_arr(SIZE);
-    sort(test, SIZE, QUICK, withTime);
-    //sort_print(test, SIZE);
-    sort_destroy(test);
+    GRAPH g = graph_init();
+    for (int i = 1; i <= 4; i++) {
+        graph_addVertex(g, i);
+    }
+    graph_addConnection(g, 1, 2, 3);
+    graph_addConnection(g, 1, 4, 1);
+    graph_addConnection(g, 2, 4, 5);
+    graph_addConnection(g, 3, 2, 4);
+    graph_addConnection(g, 4, 1, 2);
+
+    int shortestPath = graph_shortestPath(g, 1, 3);
+    printf("\nShortest path from 1 -> 3 is %d units\n", shortestPath); //-1
+
+    shortestPath = graph_shortestPath(g, 2, 1);
+    printf("\nShortest path from 2 -> 1 is %d units\n", shortestPath);  //5 + 2 = 7
+
+    shortestPath = graph_shortestPath(g, 3, 1);
+    printf("\nShortest path from 3 -> 1 is %d units\n", shortestPath); //4 + 5 + 2 = 11
     
+    shortestPath = graph_shortestPath(g, 1, 4);
+    printf("\nShortest path from 1 -> 4 is %d units\n", shortestPath);  //1 (direct path)
+    
+    shortestPath = graph_shortestPath(g, 3, 4);
+    printf("\nShortest path from 3 -> 4 is %d units\n\n", shortestPath); //4 + 5 = 9
+    
+    graph_destroy(&g);
     return 0;
 }
-
-//int main(void) {
-//    GRAPH g = graph_init();
-//    for (int i = 1; i <= 4; i++) {
-//        graph_addVertex(g, i);
-//    }
-//    graph_addConnection(g, 1, 2, 3);
-//    graph_addConnection(g, 1, 4, 1);
-//    graph_addConnection(g, 2, 4, 5);
-//    graph_addConnection(g, 3, 2, 4);
-//    graph_addConnection(g, 4, 1, 2);
-//
-////    int shortestPath = graph_shortestPath(g, 1, 3);
-////    printf("\nShortest path from 1 -> 3 is %d units\n", shortestPath); //-1
-//
-//    int shortestPath = graph_shortestPath(g, 2, 1);
-//    printf("\nShortest path from 2 -> 1 is %d units\n", shortestPath);  //5 + 2 = 7
-//
-////    shortestPath = graph_shortestPath(g, 3, 1);
-////    printf("\nShortest path from 3 -> 1 is %d units\n\n", shortestPath); //4 + 5 + 2 = 11
-//
-//    graph_destroy(&g);
-//    return 0;
-//}
 
 
 
