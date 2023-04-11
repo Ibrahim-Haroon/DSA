@@ -286,60 +286,82 @@ int minDistance(int distance[], bool sptSet[], int V) {
     return min_index;
 }
 
+typedef struct dijkstraVertex {
+    int item;
+    int dist;
+    bool visited;
+    struct dijkstraVertex* prev;
+} DijkstraVertex;
+
 int graph_shortestPath(GRAPH graph, int from, int to) {
-    if (graph_isEmpty(graph)) {
-        printf("EMPTY graph\n");
-        return -1;
-    }
-    if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
-        printf("No path exists from %d to %d\n", from, to);
-        return -1;
-    }
     Graph* weighted_graph = (Graph*)graph;
-    //sptSet = shortest path tree Set
-    bool* sptSet = (bool*) calloc(sizeof(bool), weighted_graph ->size); //sets everything to false
-    if (sptSet == NULL) {
-        printf("HEAP is full\n Could not allocate space for sptSet\n");
-        return INFINITY;
-    }
-    int* distance = (int*) malloc(sizeof(int) * weighted_graph ->size);
-    if (distance == NULL) {
-        printf("HEAP is full\n Could not allocate space for distances list\n");
-        return INFINITY;
-    }
-    //set all distances from src to destination to INFINITY
-    for (int i = 0; i < weighted_graph->size; i++) {
-        distance[i] = INFINITY;
+    if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
+        printf("Invalid vertex\n");
+        return -1;
     }
     
-    distance[from] = 0;
-    for (int i = 0; i < weighted_graph->size - 1; i++) {
-        int min_distance = INFINITY;
-        int min_index = -1;
-        for (int j = 0; j < weighted_graph->size; j++) {
-            if (!sptSet[j] && distance[j] <= min_distance) {
-                min_distance = distance[j];
-                min_index = j;
-            }
-        }
-        min_index--;
-        sptSet[min_index] = true;
-        Vertex* current_vertex = weighted_graph->adjagency_list[min_index];
-        while (current_vertex != NULL) {
-            int neighbor_index = current_vertex->item;
-            int weight = current_vertex ->weight;
-            printf("---\t%d---",weight);
-            if (!sptSet[neighbor_index] && distance[min_index] != INFINITY &&
-                distance[min_index] + weight < distance[neighbor_index]) {
-                distance[neighbor_index] = distance[min_index] + weight;
-            }
-            current_vertex = current_vertex->edge;
+    // Create array of Dijkstra vertices
+    DijkstraVertex* dijkstraVertices = (DijkstraVertex*) malloc(sizeof(DijkstraVertex) * weighted_graph->size);
+    for (int i = 0; i < weighted_graph->size; i++) {
+        dijkstraVertices[i].item = weighted_graph->adjagency_list[i]->item;
+        dijkstraVertices[i].dist = INFINITY;
+        dijkstraVertices[i].visited = false;
+        dijkstraVertices[i].prev = NULL;
+    }
+    
+    // Set starting vertex distance to 0
+    int startIndex = -1;
+    for (int i = 0; i < weighted_graph->size; i++) {
+        if (weighted_graph->adjagency_list[i]->item == from) {
+            dijkstraVertices[i].dist = 0;
+            startIndex = i;
+            break;
         }
     }
-    int dist = distance[to] > 0? distance[to] : -1;
-    return dist;
+    
+    // Run Dijkstra's algorithm
+    for (int i = 0; i < weighted_graph->size - 1; i++) {
+        // Find vertex with minimum distance
+        int minIndex = -1;
+        int minDist = INFINITY;
+        for (int j = 0; j < weighted_graph->size; j++) {
+            if (!dijkstraVertices[j].visited && dijkstraVertices[j].dist < minDist) {
+                minIndex = j;
+                minDist = dijkstraVertices[j].dist;
+            }
+        }
+        
+        // Set vertex as visited
+        dijkstraVertices[minIndex].visited = true;
+        
+        // Update distances of adjacent vertices
+        Vertex* currentVertex = weighted_graph->adjagency_list[minIndex];
+        while (currentVertex != NULL) {
+            for (int j = 0; j < weighted_graph->size; j++) {
+                if (dijkstraVertices[j].item == currentVertex->item) {
+                    int newDist = dijkstraVertices[minIndex].dist + currentVertex->weight;
+                    if (newDist < dijkstraVertices[j].dist) {
+                        dijkstraVertices[j].dist = newDist;
+                        dijkstraVertices[j].prev = &dijkstraVertices[minIndex];
+                    }
+                    break;
+                }
+            }
+            currentVertex = currentVertex->edge;
+        }
+    }
+    
+    int shortestPath = dijkstraVertices[to - 1].dist;
+    if (shortestPath == INFINITY) {
+        printf("No path found from %d to %d\n", from, to);
+        return -1;
+    }
+    
+    // Cleanup
+    free(dijkstraVertices);
+    
+    return shortestPath;
 }
-
 
 LIST topological_sort(GRAPH graph) {
     if (graph_isEmpty(graph)) {
@@ -364,110 +386,3 @@ void graph_destroy(GRAPH* graph) {
     *graph = NULL;
     return;
 }
-
-
-/*
- int graph_shortestPath(GRAPH graph, int from, int to) { //update
- if (graph_isEmpty(graph)) {
- printf("EMPTY graph\n");
- return -1;
- }
- if (!graph_isConnected(graph, from, to)) {
- printf("No path exists from %d to %d\n", from, to);
- return -1;
- }
- Graph* weighted_graph = (Graph*)graph;
- int numOfConnectedVertices = 0;
- for (int i = 0; i < weighted_graph ->size; i++) {
- if (weighted_graph ->adjagency_list[i]->item == from) {
- numOfConnectedVertices = weighted_graph ->adjagency_list[i]->adjagencyListSize;
- }
- }
- //sptSet = shortest path tree Set
- bool* sptSet = (bool*) calloc(sizeof(bool), numOfConnectedVertices + 1); //sets everything to false
- if (sptSet == NULL) {
- printf("HEAP is full\n Could not allocate space for sptSet\n");
- return INFINITY;
- }
- int* distance = (int*) malloc(sizeof(int) * numOfConnectedVertices + 1);
- if (distance == NULL) {
- printf("HEAP is full\n Could not allocate space for distances list\n");
- return INFINITY;
- }
- memset(distance, INFINITY, sizeof(int) * numOfConnectedVertices + 1);  //set all distances to infinity
- distance[from] = 0; //distance from itself is always 0
- 
- for (int i = 0; i < numOfConnectedVertices; i++) {
- int u = minDistance(distance, sptSet, numOfConnectedVertices + 1);
- sptSet[u] = true;
- 
- for (int v = 0; v < numOfConnectedVertices + 1; v++) {
- if (!sptSet[v] &&
- graph_isConnected(graph, u, v) &&
- graph_getWeight(graph, u, v) < distance[v])
- {
- distance[v] = graph_getWeight(graph, u, v);
- }
- }
- }
- int shortestPath = distance[to];
- free(sptSet);
- free(distance);
- return shortestPath;
- }
- */
-
-
-
-//int graph_shortestPath(GRAPH graph, int from, int to) { //update
-//    if (graph_isEmpty(graph)) {
-//        printf("EMPTY graph\n");
-//        return -1;
-//    }
-//    if (!graph_containsVertex(graph, from) || !graph_containsVertex(graph, to)) {
-//        printf("No path exists from %d to %d\n", from, to);
-//        return -1;
-//    }
-//    Graph* weighted_graph = (Graph*)graph;
-//    //sptSet = shortest path tree Set
-//    bool* sptSet = (bool*) calloc(sizeof(bool), weighted_graph ->size); //sets everything to false
-//    if (sptSet == NULL) {
-//        printf("HEAP is full\n Could not allocate space for sptSet\n");
-//        return INFINITY;
-//    }
-//    int* distance = (int*) malloc(sizeof(int) * weighted_graph ->size);
-//    if (distance == NULL) {
-//        printf("HEAP is full\n Could not allocate space for distances list\n");
-//        return INFINITY;
-//    }
-//    memset(distance, INFINITY, sizeof(int) * weighted_graph ->size);  //set all distances to infinity
-//
-//    distance[from] = 0; //distance from itself is always 0
-//
-//    for (int i = 0; i < weighted_graph ->size - 1; i++) {
-//        int u = minDistance(distance, sptSet, weighted_graph ->size);
-//        sptSet[u] = true;
-//
-//        if (u == to) {
-//            return distance[to];
-//        }
-//
-//        Vertex* temp = weighted_graph ->adjagency_list[u];
-//        while (temp != NULL) {
-//
-//        }
-//
-//        for (int v = 0; v < weighted_graph ->size; v++) {
-//            if (sptSet[v] == false &&
-//                graph_isConnected(graph, u, v) &&
-//                graph_getWeight(graph, u, v) < distance[v])
-//            {
-//                distance[v] = graph_getWeight(graph, u, v);
-//            }
-//        }
-//    }
-//    int shortestPath = distance[to];
-//    free(sptSet);
-//    free(distance);
-//    return shortestPath;
-//}
