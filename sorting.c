@@ -205,9 +205,94 @@ double qsort_w_time(int* arr, int size) {
        )
 }
 
-double merge_sort(int* arr, int size) {
+void merge(int arr[], int left, int middle, int right) {
+    int i, j, k;
+    int n1 = middle - left + 1;
+    int n2 = right - middle;
     
-    return 0;
+    int* leftArr = (int*)malloc(n1 * sizeof(int));
+    if (leftArr == NULL) {
+        fprintf(stderr, "Failed to allocate space for left array\n");
+        return;
+    }
+    int* rightArr = (int*)malloc(n2 * sizeof(int));
+    if (rightArr == NULL) {
+        fprintf(stderr, "Failed to allocate space for right array\n");
+        return;
+    }
+    
+    for (i = 0; i < n1; i++) {
+        leftArr[i] = arr[left + i];
+    }
+    
+    for (j = 0; j < n2; j++) {
+        rightArr[j] = arr[middle + 1 + j];
+    }
+    
+    i = 0;
+    j = 0;
+    k = left;
+    
+    while (i < n1 && j < n2) {
+        if (leftArr[i] <= rightArr[j]) {
+            arr[k] = leftArr[i];
+            i++;
+        }
+        else {
+            arr[k] = rightArr[j];
+            j++;
+        }
+        k++;
+    }
+    
+    while (i < n1) {
+        arr[k] = leftArr[i];
+        i++;
+        k++;
+    }
+    
+    while (j < n2) {
+        arr[k] = rightArr[j];
+        j++;
+        k++;
+    }
+    
+    free(leftArr);
+    free(rightArr);
+}
+
+
+int min(int a, int b) {
+    return a < b ? a : b;
+}
+
+void merge_sort(int* arr, int size) {
+    int currSize;
+    int leftStart, middle, rightEnd;
+    
+    for (currSize = 1; currSize < size; currSize *= 2) {
+        for (leftStart = 0; leftStart < size - 1; leftStart += 2 * currSize) {
+            middle = leftStart + currSize - 1;
+            rightEnd = min(leftStart + 2 * currSize - 1, size - 1);
+            merge(arr, leftStart, middle, rightEnd);
+        }
+    }
+
+    return;
+}
+
+double timed_mergeSort(int* arr, int size) {
+    int currSize;
+    int leftStart, middle, rightEnd;
+    TIMED (
+           for (currSize = 1; currSize < size; currSize *= 2) {
+               for (leftStart = 0; leftStart < size - 1; leftStart += 2 * currSize) {
+                   middle = leftStart + currSize - 1;
+                   rightEnd = min(leftStart + 2 * currSize - 1, size - 1);
+                   merge(arr, leftStart, middle, rightEnd);
+               }
+           }
+        )
 }
 
 double count_sort(int* arr, int size) {
@@ -255,9 +340,54 @@ double count_sort(int* arr, int size) {
    )
 }
 
-double radix_sort(int* arr, int size) {
+int maxElement(int* arr, int size) {
+    int max = arr[0];
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > max) max = arr[i];
+    }
+    return max;
+}
+
+void radix_helper(int* arr, int size, int digitPlace) {
+    int tempArraysSize = maxElement(arr, size) + 1;
     
-    return 0.0;
+    int* iterationCount = (int*) calloc(tempArraysSize, sizeof(int));
+    if (iterationCount == NULL) exit(EXIT_FAILURE);
+    //determine occurence of each element
+    for (int i = 0; i < size; i++) {
+        int num = (arr[i] / digitPlace) % 10;
+        iterationCount[num]++;
+    }
+    
+    int* accumulativeSum = (int*) calloc (tempArraysSize, sizeof(int));
+    if (accumulativeSum == NULL) exit(EXIT_FAILURE);
+    //determine the element and element before
+    accumulativeSum[0] = iterationCount[0];
+    for (int i = 1; i < tempArraysSize; i++) {
+        accumulativeSum[i] = iterationCount[i] + accumulativeSum[i - 1];
+    }
+    free(iterationCount);
+    
+    int* res = (int*) malloc (sizeof(int) * size);
+    if (res == NULL) exit(EXIT_FAILURE);
+    //place all numbers in correct slot
+    for (int i = size - 1; i >= 0; i--) {
+        int index = accumulativeSum[(arr[i] / digitPlace) % 10] - 1;
+        res[index] = arr[i];
+        accumulativeSum[(arr[i] / digitPlace) % 10]--;
+    }
+    free(accumulativeSum);
+    //copy sorted arr to original arr
+    for (int i = 0; i < size; i++) arr[i] = res[i];
+}
+
+double radix_sort(int* arr, int size) {
+    TIMED (
+       int max = maxElement(arr, size);
+       for (int digitPlace = 1; max / digitPlace > 0; digitPlace *=10) {
+           radix_helper(arr, size, digitPlace);
+       }
+       )
 }
 
 void sort(int* arr, int size, Sort_By technique, TIME timed) {
@@ -306,10 +436,10 @@ void sort(int* arr, int size, Sort_By technique, TIME timed) {
             break;
         case MERGE:
             if (timed == withTime) {
-                double time = merge_sort(arr, size);
+                double time = timed_mergeSort(arr, size);
                 printf("Merge sort took %.2f seconds\n", time);
             }
-            else merge_sort(arr, size);
+             merge_sort(arr, size);
             break;
         case COUNT:
             if (timed == withTime) {
