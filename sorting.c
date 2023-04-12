@@ -206,55 +206,52 @@ double qsort_w_time(int* arr, int size) {
 }
 
 void merge(int arr[], int left, int middle, int right) {
-    int i, j, k;
-    int n1 = middle - left + 1;
-    int n2 = right - middle;
+    int left_arr_size = middle - left + 1; //num elements in left sub-array
+    int right_arr_size = right - middle;    //num elements in right sub-array
     
-    int* leftArr = (int*)malloc(n1 * sizeof(int));
+    int* leftArr = (int*)malloc(left_arr_size * sizeof(int));
     if (leftArr == NULL) {
         fprintf(stderr, "Failed to allocate space for left array\n");
         return;
     }
-    int* rightArr = (int*)malloc(n2 * sizeof(int));
+    int* rightArr = (int*)malloc(right_arr_size * sizeof(int));
     if (rightArr == NULL) {
         fprintf(stderr, "Failed to allocate space for right array\n");
         return;
     }
     
-    for (i = 0; i < n1; i++) {
+    for (int i = 0; i < left_arr_size; i++) {          //fill left sub-array
         leftArr[i] = arr[left + i];
     }
     
-    for (j = 0; j < n2; j++) {
-        rightArr[j] = arr[middle + 1 + j];
+    for (int i = 0; i < right_arr_size; i++) {          //fill right sub-array
+        rightArr[i] = arr[middle + 1 + i];
     }
     
-    i = 0;
-    j = 0;
-    k = left;
+    int left_index = 0, right_index = 0, sorted_arr_index = left;
     
-    while (i < n1 && j < n2) {
-        if (leftArr[i] <= rightArr[j]) {
-            arr[k] = leftArr[i];
-            i++;
+    while (left_index < left_arr_size && right_index < right_arr_size) {
+        if (leftArr[left_index] <= rightArr[right_index]) {
+            arr[sorted_arr_index] = leftArr[left_index];
+            left_index++;
         }
         else {
-            arr[k] = rightArr[j];
-            j++;
+            arr[sorted_arr_index] = rightArr[right_index];
+            right_index++;
         }
-        k++;
+        sorted_arr_index++;
     }
     
-    while (i < n1) {
-        arr[k] = leftArr[i];
-        i++;
-        k++;
+    while (left_index < left_arr_size) {                //if left array larger
+        arr[sorted_arr_index] = leftArr[left_index];
+        left_index++;
+        sorted_arr_index++;
     }
     
-    while (j < n2) {
-        arr[k] = rightArr[j];
-        j++;
-        k++;
+    while (right_index < right_arr_size) {              //if right array larger
+        arr[sorted_arr_index] = rightArr[right_index];
+        right_index++;
+        sorted_arr_index++;
     }
     
     free(leftArr);
@@ -267,13 +264,10 @@ int min(int a, int b) {
 }
 
 void merge_sort(int* arr, int size) {
-    int currSize;
-    int leftStart, middle, rightEnd;
-    
-    for (currSize = 1; currSize < size; currSize *= 2) {
-        for (leftStart = 0; leftStart < size - 1; leftStart += 2 * currSize) {
-            middle = leftStart + currSize - 1;
-            rightEnd = min(leftStart + 2 * currSize - 1, size - 1);
+    for (int currSize = 1; currSize < size; currSize *= 2) {
+        for (int leftStart = 0; leftStart < size - 1; leftStart += 2 * currSize) {
+            int middle = leftStart + currSize - 1;
+            int rightEnd = min(leftStart + 2 * currSize - 1, size - 1);
             merge(arr, leftStart, middle, rightEnd);
         }
     }
@@ -282,13 +276,11 @@ void merge_sort(int* arr, int size) {
 }
 
 double timed_mergeSort(int* arr, int size) {
-    int currSize;
-    int leftStart, middle, rightEnd;
     TIMED (
-           for (currSize = 1; currSize < size; currSize *= 2) {
-               for (leftStart = 0; leftStart < size - 1; leftStart += 2 * currSize) {
-                   middle = leftStart + currSize - 1;
-                   rightEnd = min(leftStart + 2 * currSize - 1, size - 1);
+           for (int currSize = 1; currSize < size; currSize *= 2) {
+               for (int leftStart = 0; leftStart < size - 1; leftStart += 2 * currSize) {
+                   int middle = leftStart + currSize - 1;
+                   int rightEnd = min(leftStart + 2 * currSize - 1, size - 1);
                    merge(arr, leftStart, middle, rightEnd);
                }
            }
